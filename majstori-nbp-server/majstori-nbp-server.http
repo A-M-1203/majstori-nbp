@@ -1,0 +1,6 @@
+@majstori_nbp_server_HostAddress = http://localhost:5104
+
+GET {{majstori_nbp_server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
