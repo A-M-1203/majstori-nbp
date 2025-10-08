@@ -11,10 +11,23 @@ public static class ApiEndpoints
             private const string Base = $"{VersionBase}/majstori";
 
             public const string GetAll = Base;
-            public const string Get = $"{Base}/{{id}}";
+            public const string GetById = $"{Base}/{{id}}";
             public const string Create = Base;
             public const string Update = $"{Base}/{{id}}";
             public const string Delete = $"{Base}/{{id}}";
+            public const string Emails = $"{Base}/emails";
+        }
+
+        public static class Klijenti
+        {
+            private const string Base = $"{VersionBase}/klijenti";
+
+            public const string GetAll = Base;
+            public const string GetById = $"{Base}/{{id}}";
+            public const string Create = Base;
+            public const string Update = $"{Base}/{{id}}";
+            public const string Delete = $"{Base}/{{id}}";
+            public const string Emails = $"{Base}/emails";
         }
     }
 }

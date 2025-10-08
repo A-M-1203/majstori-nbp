@@ -8,9 +8,16 @@ namespace majstori_nbp_server.Controllers;
 public class MajstoriController : ControllerBase
 {
     private readonly IMajstorService _majstorService;
+
     public MajstoriController(IMajstorService majstorService)
     {
         _majstorService = majstorService;
+    }
+
+    [HttpGet(ApiEndpoints.V1.Majstori.Emails)]
+    public IActionResult Emails()
+    {
+        return Ok(_majstorService.GetAllEmails());
     }
 
     [HttpGet(ApiEndpoints.V1.Majstori.GetAll)]
@@ -21,7 +28,7 @@ public class MajstoriController : ControllerBase
         return Ok(majstori);
     }
 
-    [HttpGet(ApiEndpoints.V1.Majstori.Get)]
+    [HttpGet(ApiEndpoints.V1.Majstori.GetById)]
     public async Task<IActionResult> GetById(string id)
     {
         GetMajstorDTO? majstor = await _majstorService.GetByIdAsync(id);

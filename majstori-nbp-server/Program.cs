@@ -10,6 +10,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<ICacheService, RedisCacheService>();
 builder.Services.AddScoped<IMajstorService, MajstorService>();
+builder.Services.AddScoped<IKlijentService, KlijentService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 var app = builder.Build();
 

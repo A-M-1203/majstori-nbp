@@ -40,6 +40,20 @@ public class RedisCacheService : ICacheService
         return await _redisDb.StringGetAsync(key);
     }
 
+    public IEnumerable<string> GetAllSetData(string key)
+    {
+        var members = _redisDb.SetScan(key);
+        foreach (var member in members)
+        {
+            yield return member.ToString();
+        }
+    }
+
+    public async Task<bool> GetSetDataAsync(string key, string value)
+    {
+        return await _redisDb.SetContainsAsync(key, value);
+    }
+
     public async Task<Dictionary<string, List<HashEntry>>> GetAllHashDataAsync(string keyPattern)
     {
         Dictionary<string, List<HashEntry>> entries = new();
@@ -72,6 +86,11 @@ public class RedisCacheService : ICacheService
         }
 
         return isSet;
+    }
+
+    public async Task<bool> CreateSetDataAsync(string key, string value)
+    {
+        return await _redisDb.SetAddAsync(key, value);
     }
 
     public async Task<List<HashEntry>> CreateHashDataAsync<T>(string key, T value)
@@ -152,5 +171,10 @@ public class RedisCacheService : ICacheService
         bool isRemoved = await _redisDb.KeyDeleteAsync(key);
 
         return isRemoved;
+    }
+
+    public async Task<bool> DeleteSetDataAsync(string key, string value)
+    {
+        return await _redisDb.SetRemoveAsync(key, value);
     }
 }
