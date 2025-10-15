@@ -5,7 +5,7 @@ namespace majstori_nbp_server.Services;
 public interface IKlijentService
 {
     IEnumerable<string> GetAllEmails();
-    Task<IEnumerable<GetKlijentDTO>> GetAllAsync();
+    IAsyncEnumerable<GetKlijentDTO> GetAllAsync();
     Task<GetKlijentDTO?> GetByIdAsync(string id);
     Task<GetKlijentDTO?> CreateAsync(CreateKlijentDTO klijent);
     Task<GetKlijentDTO?> UpdateAsync(string id, UpdateKlijentDTO klijent);

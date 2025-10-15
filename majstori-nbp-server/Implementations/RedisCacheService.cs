@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using majstori_nbp_server.Services;
 using StackExchange.Redis;
 
@@ -24,22 +23,50 @@ public class RedisCacheService : ICacheService
         serverConfig = connection.GetServer("redis-16631.c300.eu-central-1-1.ec2.redns.redis-cloud.com", 16631);
     }
 
-    public async Task<List<string?>> GetAllData(string keyPattern)
+    public async IAsyncEnumerable<string> GetAllDataAsync(string keyPattern)
     {
-        List<string?> values = new();
         await foreach (var key in serverConfig.KeysAsync(pattern: keyPattern))
         {
-            var value = await _redisDb.StringGetAsync(key);
-            values.Add(value);
+            yield return key.ToString();
         }
-
-        return values;
     }
 
     public async Task<string?> GetDataAsync(string key)
     {
-        return await _redisDb.StringGetAsync(key);
+        return (await _redisDb.StringGetAsync(key)).ToString();
     }
+
+    public async Task<bool> CreateDataAsync(string key, string value)
+    {
+        bool isCreated = await _redisDb.StringSetAsync(key, value, when: When.NotExists);
+        return isCreated;
+    }
+
+    public async Task<bool> CreateDataWithExpiryAsync(string key, string value, TimeSpan expiry)
+    {
+        bool isCreated = await _redisDb.StringSetAsync(key, value, expiry, when: When.NotExists);
+        return isCreated;
+    }
+
+    public async Task<bool> UpdateDataAsync(string key, string newValue)
+    {
+        bool isUpdated = await _redisDb.StringSetAsync(key, newValue, when: When.Exists);
+        return isUpdated;
+    }
+
+    public async Task<bool> UpdateDataWithExpiryAsync(string key, string newValue, TimeSpan expiry)
+    {
+        bool isUpdated = await _redisDb.StringSetAsync(key, newValue, expiry, when: When.Exists);
+        return isUpdated;
+    }
+
+    public async Task<bool> DeleteDataAsync(string key)
+    {
+        bool isRemoved = await _redisDb.KeyDeleteAsync(key);
+        return isRemoved;
+    }
+
+
 
     public IEnumerable<string> GetAllSetData(string key)
     {
@@ -50,50 +77,9 @@ public class RedisCacheService : ICacheService
         }
     }
 
-    public async Task<bool> GetSetDataAsync(string key, string value)
+    public async Task<bool> SetDataExistsAsync(string key, string value)
     {
         return await _redisDb.SetContainsAsync(key, value);
-    }
-
-    // public async Task<IEnumerable<string>> GetAllSortedSetData(string key)
-    // {
-    //     await _redisDb.SortedSetRangeByRankWithScoresAsync(key, order: Order.Ascending);
-    // }
-
-
-
-    public async Task<Dictionary<string, List<HashEntry>>> GetAllHashDataAsync(string keyPattern)
-    {
-        Dictionary<string, List<HashEntry>> entries = new();
-        await foreach (var key in serverConfig.KeysAsync(pattern: keyPattern))
-        {
-            var entry = await _redisDb.HashGetAllAsync(key);
-            entries.Add(key!, entry.ToList());
-        }
-
-        return entries;
-    }
-
-    public async Task<List<HashEntry>> GetHashDataAsync(string key)
-    {
-        var entries = await _redisDb.HashGetAllAsync(key);
-        return entries.ToList();
-    }
-
-    public async Task<bool> CreateDataAsync(string key, string value)
-    {
-        bool isSet = await _redisDb.StringSetAsync(key, value, when: When.NotExists);
-
-        if (isSet)
-        {
-            Console.WriteLine($"Kljuc '{key}' je upisan sa vrednoscu '{value}'.");
-        }
-        else
-        {
-            Console.WriteLine($"Kljuc '{key}' nije upisan.");
-        }
-
-        return isSet;
     }
 
     public async Task<bool> CreateSetDataAsync(string key, string value)
@@ -101,17 +87,106 @@ public class RedisCacheService : ICacheService
         return await _redisDb.SetAddAsync(key, value);
     }
 
-    public async Task<double> CreateSortedSetDataAsync(string key, string value, int score)
+    public async Task<bool> UpdateSetDataAsync(string key, string oldValue, string newValue)
+    {
+        bool isRemoved = await _redisDb.SetRemoveAsync(key, oldValue);
+        if (isRemoved is false)
+        {
+            return false;
+        }
+
+        bool isUpdated = await _redisDb.SetAddAsync(key, newValue);
+        return isUpdated;
+    }
+
+    public async Task<bool> DeleteSetDataAsync(string key, string value)
+    {
+        return await _redisDb.SetRemoveAsync(key, value);
+    }
+
+
+
+    public async IAsyncEnumerable<(string Value, double Score)> GetAllSortedSetData(string key,
+                                                                            long pageSize = 100,
+                                                                            Order order = Order.Descending)
+    {
+        long start = 0;
+
+        while (true)
+        {
+            var entries = await _redisDb.SortedSetRangeByRankWithScoresAsync(key, start,
+                                                                            start + pageSize - 1,
+                                                                            order);
+            if (entries.Length == 0)
+            {
+                yield break;
+            }
+
+            foreach (var entry in entries)
+            {
+                yield return (entry.Element.ToString(), entry.Score);
+            }
+
+            start += pageSize;
+        }
+    }
+
+    public async Task<double> CreateOrIncrementSortedSetDataAsync(string key, string value, int score)
     {
         return await _redisDb.SortedSetIncrementAsync(key, value, score);
     }
 
-    public async Task<List<HashEntry>> CreateHashDataAsync<T>(string key, T value)
+    public async Task<bool> UpdateSortedSetDataAsync(string key, string oldValue, string newValue)
+    {
+        var score = await _redisDb.SortedSetScoreAsync(key, oldValue);
+
+        if (score is null)
+        {
+            return false;
+        }
+
+        bool isRemoved = await _redisDb.SortedSetRemoveAsync(key, oldValue);
+        if (isRemoved is false)
+        {
+            return false;
+        }
+
+        bool isUpdated = await _redisDb.SortedSetAddAsync(key, oldValue, score.Value);
+        return isUpdated;
+    }
+
+    public async Task<bool> DeleteSortedSetDataAsync(string key, string value)
+    {
+        bool isRemoved = await _redisDb.SortedSetRemoveAsync(key, value);
+        return isRemoved;
+    }
+
+
+
+    public async IAsyncEnumerable<(string Key, List<HashEntry> Entries)> GetAllHashDataAsync(string keyPattern)
+    {
+        await foreach (var key in serverConfig.KeysAsync(pattern: keyPattern))
+        {
+            var entries = await _redisDb.HashGetAllAsync(key);
+            yield return (key!, entries.ToList());
+        }
+    }
+
+    public async Task<List<HashEntry>?> GetHashDataAsync(string key)
+    {
+        var entries = await _redisDb.HashGetAllAsync(key);
+        if (entries is null)
+        {
+            return null;
+        }
+        return entries.ToList();
+    }
+
+    public async Task<List<HashEntry>?> CreateHashDataAsync<T>(string key, T value)
     {
         if (await _redisDb.KeyExistsAsync(key))
         {
-            Console.WriteLine($"Kljuc {key} vec postoji.");
-            return new();
+            return null;
         }
 
         var properties = typeof(T).GetProperties();
@@ -133,10 +208,10 @@ public class RedisCacheService : ICacheService
             return await GetHashDataAsync(key);
         }
 
-        return new();
+        return null;
     }
 
-    public async Task<List<HashEntry>> UpdateHashDataAsync<T>(string key, T value)
+    public async Task<List<HashEntry>?> UpdateHashDataAsync<T>(string key, T value)
     {
         bool exists = await _redisDb.KeyExistsAsync(key);
         var entries = new List<HashEntry>();
@@ -164,10 +239,18 @@ public class RedisCacheService : ICacheService
         return entries;
     }
 
+    public async Task<bool> DeleteHashDataAsync(string key)
+    {
+        bool isRemoved = await DeleteDataAsync(key);
+        return isRemoved;
+    }
+
+
+
     public async Task<bool> SetKeyExpiryTimeAsync(string key, TimeSpan expiryTime)
     {
         bool isSet = await _redisDb.KeyExpireAsync(key, expiryTime);
-        if (isSet)
+        if (isSet is true)
         {
             Console.WriteLine($"Vreme vazenja kljuca '{key}' je postavljeno na {expiryTime.TotalSeconds} sekundi.");
         }
@@ -177,17 +260,5 @@ public class RedisCacheService : ICacheService
         }
 
         return isSet;
-    }
-
-    public async Task<bool> DeleteDataAsync(string key)
-    {
-        bool isRemoved = await _redisDb.KeyDeleteAsync(key);
-
-        return isRemoved;
-    }
-
-    public async Task<bool> DeleteSetDataAsync(string key, string value)
-    {
-        return await _redisDb.SetRemoveAsync(key, value);
     }
 }

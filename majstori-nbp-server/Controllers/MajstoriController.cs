@@ -14,9 +14,6 @@ public class MajstoriController : ControllerBase
         _majstorService = majstorService;
     }
 
-    [HttpGet("test")]
-    public IActionResult Get() => Ok(new { Datum = DateTime.Now });
-
     [HttpGet(ApiEndpoints.V1.Majstori.Emails)]
     public IActionResult Emails()
     {
@@ -26,45 +23,61 @@ public class MajstoriController : ControllerBase
     [HttpGet(ApiEndpoints.V1.Majstori.GetAll)]
     public async Task<IActionResult> GetAll()
     {
-        IEnumerable<GetMajstorDTO> majstori = await _majstorService.GetAllAsync();
-
-        return Ok(majstori);
+        return Ok(_majstorService.GetAllAsync());
     }
 
     [HttpGet(ApiEndpoints.V1.Majstori.GetById)]
     public async Task<IActionResult> GetById(string id)
     {
         GetMajstorDTO? majstor = await _majstorService.GetByIdAsync(id);
-        if (majstor != null)
+        if (majstor is not null)
         {
             return Ok(majstor);
         }
 
-        return NotFound();
+        return Problem
+        (
+            type: "Not Found",
+            title: "Majstor ne postoji",
+            detail: "Majstor sa navedenim Id-jem ne postoji",
+            statusCode: StatusCodes.Status404NotFound
+        );
     }
 
     [HttpPost(ApiEndpoints.V1.Majstori.Create)]
     public async Task<IActionResult> Create([FromBody] CreateMajstorDTO majstor)
     {
         GetMajstorDTO? noviMajstor = await _majstorService.CreateAsync(majstor);
-        if (noviMajstor != null)
+        if (noviMajstor is not null)
         {
             return CreatedAtAction(nameof(GetById), new { id = noviMajstor.Id.ToString() }, noviMajstor);
         }
 
-        return BadRequest();
+        return Problem
+        (
+            type: "Bad Request",
+            title: "Majstor nije kreiran",
+            detail: "Vec postoji nalog sa navedenom email adresom",
+            statusCode: StatusCodes.Status400BadRequest
+        );
     }
 
     [HttpPut(ApiEndpoints.V1.Majstori.Update)]
     public async Task<IActionResult> Update(string id, [FromBody] UpdateMajstorDTO majstor)
     {
         GetMajstorDTO? azuriraniMajstor = await _majstorService.UpdateAsync(id, majstor);
-        if (azuriraniMajstor != null)
+        if (azuriraniMajstor is not null)
         {
             return Ok(azuriraniMajstor);
         }
 
-        return NotFound();
+        return Problem
+        (
+            type: "Not Found",
+            title: "Majstor ne postoji",
+            detail: "Majstor sa navedenim Id-jem ne postoji",
+            statusCode: StatusCodes.Status404NotFound
+        );
     }
 
     [HttpDelete(ApiEndpoints.V1.Majstori.Delete)]
@@ -76,6 +89,12 @@ public class MajstoriController : ControllerBase
             return Ok();
         }
 
-        return NotFound();
+        return Problem
+        (
+            type: "Not Found",
+            title: "Majstor ne postoji",
+            detail: "Majstor sa navedenim Id-jem ne postoji",
+            statusCode: StatusCodes.Status404NotFound
+        );
     }
 }

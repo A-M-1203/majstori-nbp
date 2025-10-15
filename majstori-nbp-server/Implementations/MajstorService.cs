@@ -1,4 +1,3 @@
-using majstori_nbp_server.DTOs.KlijentDTOs;
 using majstori_nbp_server.DTOs.MajstorDTOs;
 using majstori_nbp_server.Mappings;
 using majstori_nbp_server.Services;
@@ -21,13 +20,22 @@ public class MajstorService : IMajstorService
         return _emailService.GetAllEmails();
     }
 
-    public async Task<IEnumerable<GetMajstorDTO>> GetAllAsync()
+    public async IAsyncEnumerable<GetMajstorDTO> GetAllAsync()
     {
-        var data = await _cacheService.GetAllHashDataAsync("majstor:*");
+        await foreach (var (key, entries) in _cacheService.GetAllHashDataAsync("majstor:*"))
+        {
+            GetMajstorDTO majstor = new();
+            string id = key.Substring("majstor:".Length);
+            majstor.Id = Guid.Parse(id);
 
-        IEnumerable<GetMajstorDTO> majstori = data.MapToListOfGetMajstorDTO();
+            majstor.Ime = entries.FirstOrDefault(x => x.Name == "ime").Value!;
+            majstor.Prezime = entries.FirstOrDefault(x => x.Name == "prezime").Value!;
+            majstor.BrojTelefona = entries.FirstOrDefault(x => x.Name == "brojtelefona").Value!;
+            majstor.Email = entries.FirstOrDefault(x => x.Name == "email").Value!;
 
-        return majstori;
+            yield return majstor;
+
+        }
     }
 
     public async Task<GetMajstorDTO?> GetByIdAsync(string id)
@@ -35,7 +43,7 @@ public class MajstorService : IMajstorService
         string key = "majstor:" + id;
         var entries = await _cacheService.GetHashDataAsync(key);
         GetMajstorDTO? majstor = null;
-        if (entries.Count > 0)
+        if (entries is not null)
         {
             majstor = entries.MapToGetMajstorDTO(id);
         }
@@ -46,7 +54,7 @@ public class MajstorService : IMajstorService
     public async Task<GetMajstorDTO?> CreateAsync(CreateMajstorDTO majstor)
     {
         bool isCreated = await _emailService.CreateEmailAsync(majstor.Email);
-        if (isCreated == false)
+        if (isCreated is false)
         {
             return null;
         }
@@ -55,7 +63,7 @@ public class MajstorService : IMajstorService
         string key = "majstor:" + id;
         var entries = await _cacheService.CreateHashDataAsync(key, majstor);
         GetMajstorDTO? noviMajstor = null;
-        if (entries.Count > 0)
+        if (entries is not null)
         {
             noviMajstor = entries.MapToGetMajstorDTO(id);
         }
@@ -74,7 +82,7 @@ public class MajstorService : IMajstorService
         string key = "majstor:" + id;
         var entries = await _cacheService.UpdateHashDataAsync(key, majstor);
         GetMajstorDTO? azuriraniMajstor = null;
-        if (entries.Count > 0)
+        if (entries is not null)
         {
             azuriraniMajstor = entries.MapToGetMajstorDTO(id);
         }
@@ -85,12 +93,12 @@ public class MajstorService : IMajstorService
     public async Task<bool> DeleteAsync(string id)
     {
         GetMajstorDTO? p = await GetByIdAsync(id);
-        if (p != null)
+        if (p is not null)
         {
             await _emailService.DeleteEmailAsync(p.Email);
         }
         string key = "majstor:" + id;
-        bool isDeleted = await _cacheService.DeleteDataAsync(key);
+        bool isDeleted = await _cacheService.DeleteHashDataAsync(key);
 
         return isDeleted;
     }

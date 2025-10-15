@@ -18,7 +18,7 @@ public class EmailService : IEmailService
 
     public async Task<bool> CheckIfExistsAsync(string email)
     {
-        return await _cacheService.GetSetDataAsync("emails", email);
+        return await _cacheService.SetDataExistsAsync("emails", email);
     }
 
     public async Task<bool> CreateEmailAsync(string email)

@@ -20,13 +20,22 @@ public class KlijentService : IKlijentService
         return _emailService.GetAllEmails();
     }
 
-    public async Task<IEnumerable<GetKlijentDTO>> GetAllAsync()
+    public async IAsyncEnumerable<GetKlijentDTO> GetAllAsync()
     {
-        var data = await _cacheService.GetAllHashDataAsync("klijent:*");
+        await foreach (var (key, entries) in _cacheService.GetAllHashDataAsync("klijent:*"))
+        {
+            GetKlijentDTO klijent = new();
+            string id = key.Substring("klijent:".Length);
+            klijent.Id = Guid.Parse(id);
 
-        IEnumerable<GetKlijentDTO> klijenti = data.MapToListOfGetKlijentDTO();
+            klijent.Ime = entries.FirstOrDefault(x => x.Name == "ime").Value!;
+            klijent.Prezime = entries.FirstOrDefault(x => x.Name == "prezime").Value!;
+            klijent.BrojTelefona = entries.FirstOrDefault(x => x.Name == "brojtelefona").Value!;
+            klijent.Email = entries.FirstOrDefault(x => x.Name == "email").Value!;
 
-        return klijenti;
+            yield return klijent;
+
+        }
     }
 
     public async Task<GetKlijentDTO?> GetByIdAsync(string id)
@@ -34,7 +43,7 @@ public class KlijentService : IKlijentService
         string key = "klijent:" + id;
         var entries = await _cacheService.GetHashDataAsync(key);
         GetKlijentDTO? klijent = null;
-        if (entries.Count > 0)
+        if (entries is not null)
         {
             klijent = entries.MapToGetKlijentDTO(id);
         }
@@ -45,7 +54,7 @@ public class KlijentService : IKlijentService
     public async Task<GetKlijentDTO?> CreateAsync(CreateKlijentDTO klijent)
     {
         bool isCreated = await _emailService.CreateEmailAsync(klijent.Email);
-        if (isCreated == false)
+        if (isCreated is false)
         {
             return null;
         }
@@ -54,7 +63,7 @@ public class KlijentService : IKlijentService
         string key = "klijent:" + id;
         var entries = await _cacheService.CreateHashDataAsync(key, klijent);
         GetKlijentDTO? noviKlijent = null;
-        if (entries.Count > 0)
+        if (entries is not null)
         {
             noviKlijent = entries.MapToGetKlijentDTO(id);
         }
@@ -73,7 +82,7 @@ public class KlijentService : IKlijentService
         string key = "klijent:" + id;
         var entries = await _cacheService.UpdateHashDataAsync(key, klijent);
         GetKlijentDTO? azuriraniKlijent = null;
-        if (entries.Count > 0)
+        if (entries is not null)
         {
             azuriraniKlijent = entries.MapToGetKlijentDTO(id);
         }
@@ -84,12 +93,12 @@ public class KlijentService : IKlijentService
     public async Task<bool> DeleteAsync(string id)
     {
         GetKlijentDTO? p = await GetByIdAsync(id);
-        if (p != null)
+        if (p is not null)
         {
             await _emailService.DeleteEmailAsync(p.Email);
         }
         string key = "klijent:" + id;
-        bool isDeleted = await _cacheService.DeleteDataAsync(key);
+        bool isDeleted = await _cacheService.DeleteHashDataAsync(key);
 
         return isDeleted;
     }
