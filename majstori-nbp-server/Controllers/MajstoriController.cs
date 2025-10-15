@@ -14,6 +14,9 @@ public class MajstoriController : ControllerBase
         _majstorService = majstorService;
     }
 
+    [HttpGet("test")]
+    public IActionResult Get() => Ok(new { Datum = DateTime.Now });
+
     [HttpGet(ApiEndpoints.V1.Majstori.Emails)]
     public IActionResult Emails()
     {

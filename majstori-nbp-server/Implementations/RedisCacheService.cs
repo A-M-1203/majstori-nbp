@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using majstori_nbp_server.Services;
 using StackExchange.Redis;
 
@@ -54,6 +55,13 @@ public class RedisCacheService : ICacheService
         return await _redisDb.SetContainsAsync(key, value);
     }
 
+    // public async Task<IEnumerable<string>> GetAllSortedSetData(string key)
+    // {
+    //     await _redisDb.SortedSetRangeByRankWithScoresAsync(key, order: Order.Ascending);
+    // }
+
+
+
     public async Task<Dictionary<string, List<HashEntry>>> GetAllHashDataAsync(string keyPattern)
     {
         Dictionary<string, List<HashEntry>> entries = new();
@@ -91,6 +99,11 @@ public class RedisCacheService : ICacheService
     public async Task<bool> CreateSetDataAsync(string key, string value)
     {
         return await _redisDb.SetAddAsync(key, value);
+    }
+
+    public async Task<double> CreateSortedSetDataAsync(string key, string value, int score)
+    {
+        return await _redisDb.SortedSetIncrementAsync(key, value, score);
     }
 
     public async Task<List<HashEntry>> CreateHashDataAsync<T>(string key, T value)
