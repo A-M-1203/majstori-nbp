@@ -1,0 +1,40 @@
+.karta {
+    width: 400px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin-top: 20px;
+}
+
+input {
+    width: 95%;
+    height: 30px;
+}
+
+mat-divider {
+    margin-top: 15px;
+}
+
+button {
+    margin-top: 15px;
+}
+
+.sredina {
+    display: flex;
+    justify-content: center;
+}
+
+mat-serlect {
+    margin-left: 1px;
+}
+
+mat-form-field {
+    width: 100%;
+    margin-bottom: 0px;
+}
+
+.disabled-category {
+    display: block;
+    text-align: center;
+}

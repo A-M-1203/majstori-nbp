@@ -1,0 +1,45 @@
+<mat-dialog-content class="dialog">
+    <h3 class="header">Editovanje profila</h3>
+    <div>
+        <img [src]="data.profilePicture" alt="Profile Picture" class="preview-image">
+        <input #fileInput type="file" accept="image/*" style="display: none" (change)="onFileSelected($event)">
+    </div>
+    <button mat-raised-button class="button" (click)="fileInput.click()">Izaberite sliku</button>
+    <mat-form-field>
+        <input matInput placeholder="Ime" [(ngModel)]="data.ime">
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput placeholder="Prezime" [(ngModel)]="data.prezime">
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput placeholder="Broj" [(ngModel)]="data.broj">
+    </mat-form-field>
+    <mat-form-field>
+        <mat-select [(ngModel)]="data.lokacija._id">
+            @for (lokacija of nizLokacija; track lokacija) {
+            <mat-option [value]="lokacija._id">{{lokacija.naziv}}</mat-option>
+            }
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput placeholder="Adresa" [(ngModel)]="data.adresa">
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" style="width: 100%;">
+        <mat-label>Izaberite kategoriju</mat-label>
+        <mat-select [(ngModel)]="kategorije" multiple="true">
+            @for (kategorija of nizKategorija; track kategorija) {
+            <mat-option disabled [value]="kategorija.naziv">{{kategorija.naziv}}</mat-option>
+            @for (podKategorija of kategorija.podkategorije; track podKategorija) {
+            <mat-option [value]="podKategorija._id">{{podKategorija.naziv}}</mat-option>
+            }
+            }
+        </mat-select>
+    </mat-form-field>
+
+
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-raised-button (click)="closeDialog()" color="accent">Izađi</button>
+    <button mat-raised-button (click)="editujProfil()" class="save">Sačuvaj promene</button>
+</mat-dialog-actions>

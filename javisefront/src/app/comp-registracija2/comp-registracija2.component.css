@@ -1,0 +1,38 @@
+.karta {
+    width: 400px;
+    position: absolute;
+    top: 55%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+
+li {
+    font-size: 12px;
+    color: rgb(75, 75, 75);
+}
+
+.sredina {
+    display: flex;
+    justify-content: center;
+}
+
+.dole {
+    margin-bottom: 15px;
+}
+
+.valid {
+    color: green;
+}
+
+.invalid {
+    color: rgb(75, 75, 75);
+}
+
+mat-form-field {
+    width: 100%;
+}
+
+ul{
+    margin-top: 0px;
+}

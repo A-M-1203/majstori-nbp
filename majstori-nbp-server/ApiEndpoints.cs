@@ -20,6 +20,7 @@ public static class ApiEndpoints
 
         public static class Klijenti
         {
+            public const string Signup = $"korisnik/signup";
             private const string Base = $"{VersionBase}/klijenti";
 
             public const string GetAll = Base;

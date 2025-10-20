@@ -1,0 +1,26 @@
+<div class="center-container">
+  <div class="cards-container">
+    <mat-card *ngIf="oglas && oglas.slike && oglas.slike.length > 0" class="custom-card">
+      <div class="slideshow-container">
+        <button class="prev" (click)="prevImage()">&#10094;</button>
+        <img class="slide" *ngFor="let image of oglas.slike; let i = index" [src]="image"
+          [style.display]="i === currentSlideIndex ? 'block' : 'none'">
+        <button class="next" (click)="nextImage()">&#10095;</button>
+      </div>
+      <h2>{{ oglas.title }}</h2>
+      <mat-divider></mat-divider>
+      <p class="oglas-content">{{ oglas.content }}</p>
+      <p><strong>Kategorija:</strong> {{ oglas.podkategorija.naziv }}</p>
+      <p><strong>Poslednji put modifikovano:</strong> {{ oglas.datumModifikacije | date }}</p>
+    </mat-card>
+
+    <mat-card *ngIf="majstor && majstor.profilePicture" class="custom-card smaller-card"
+      routerLink="../../majstor/{{majstor._id}}">
+      <div class="profile-content">
+        <img [src]="majstor.profilePicture" alt="Profile Picture" class="profile-picture">
+        <p>{{ majstor.ime }} {{ majstor.prezime }}</p>
+        <span>Prosečna ocena: {{ prosek }}</span>
+      </div>
+    </mat-card>
+  </div>
+</div>

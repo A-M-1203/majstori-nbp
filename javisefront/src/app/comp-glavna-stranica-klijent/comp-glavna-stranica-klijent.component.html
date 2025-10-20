@@ -1,0 +1,29 @@
+<div class="container">
+    <mat-card class="card-left">
+        <img [src]="profilePicture" alt="Profile Picture" class="profile-picture">
+        <p>{{ ime }}<br>{{ prezime }}</p>
+        <button mat-raised-button (click)="odNaIzabrane()" class="dugme">Izabrani majstori</button>
+        <button mat-raised-button color="accent" (click)="openDialogEditujProfil()">Editujte profil</button>
+    </mat-card>
+
+    <mat-card class="card-right">
+        <div class="grid-container">
+            <div *ngFor="let kategorija of nizKategorija" class="grid-item">
+                <div class="block">
+                    <div class="block-title">
+                        <a routerLink="kategorija/{{kategorija._id}}" class="hover"> {{ kategorija.naziv }} </a>
+                    </div>
+                    <mat-divider></mat-divider>
+                    <div class="block-content">
+                        <ul>
+                            <li *ngFor="let podkategorija of kategorija.podkategorije">
+                                <a routerLink="podkategorija/{{podkategorija._id}}" class="hover"> {{
+                                    podkategorija.naziv }} </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </mat-card>
+</div>

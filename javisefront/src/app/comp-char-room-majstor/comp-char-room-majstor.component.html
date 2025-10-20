@@ -1,0 +1,28 @@
+<div class="container">
+  <mat-card class="chat-list-card">
+    <h3>Dostupni kontakti</h3>
+    <ul>
+      <li *ngFor="let chat of chats" (click)="selectChat(chat._id)">
+        {{ chat.korisnik?.ime }}
+        <button mat-icon-button color="primary" (click)="goToPage(chat.korisnik?._id)">
+          <mat-icon>info</mat-icon>
+        </button>
+      </li>
+    </ul>
+  </mat-card>
+
+  <mat-card class="chat-card" *ngIf="selectedChat">
+    <div id="messages" #messagesContainer>
+      <div *ngFor="let message of messages"
+        [ngClass]="{'my-message-container': message.korisnik === id, 'other-message-container': message.korisnik !== id}">
+        <p [ngClass]="{'my-message': message.korisnik === id, 'other-message': message.korisnik !== id}">
+          {{ message.sadrzaj }}
+        </p>
+      </div>
+    </div>
+    <div class="input-container">
+      <input type="text" [(ngModel)]="messageContent" placeholder="Otkucajte poruku..." />
+      <button mat-raised-button class="send" (click)="sendMessage()">Send</button>
+    </div>
+  </mat-card>
+</div>

@@ -1,0 +1,56 @@
+<div class="container">
+  <div class="left-card-container">
+    <mat-card class="profile-card card-left">
+      <mat-card-header class="card-header">
+        <div class="profile-header">
+          <div class="profile-picture">
+            <img [src]="majstor?.profilePicture" alt="Profile Picture">
+          </div>
+          <div class="profile-info">
+            <mat-card-title class="majstor-name">{{ majstor?.ime }} {{ majstor?.prezime }}</mat-card-title>
+            <div class="rating-container">
+              <span class="majstor-rating">{{ prosek }}</span>
+              <mat-icon fontIcon="star" style="color: orange;"></mat-icon>
+            </div>
+          </div>
+        </div>
+      </mat-card-header>
+      <mat-card-content>
+        <p><strong>Broj:</strong> {{ majstor?.broj }}</p>
+        <p><strong>Lokacija:</strong> {{ majstor?.lokacija?.naziv }}</p>
+        <p><strong>Adresa:</strong> {{ majstor?.adresa }}</p>
+        <p><strong>E-Mail:</strong> {{ majstor?.email }}</p>
+        <ul class="kategorije">
+          <ng-container *ngFor="let podKategorija of majstor?.podkategorija">
+            <li>{{ podKategorija.naziv }}</li>
+          </ng-container>
+        </ul>
+        <button mat-raised-button (click)="dodajUKontakte()" class="dugme">Dodajte u kontakte</button>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="right-card-container">
+    <mat-card class="card-right">
+      <mat-card-header class="card-header">
+        <mat-card-title>Oglasi</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <ul>
+          <ng-container *ngFor="let oglas of post">
+            <li class="oglas-item">
+              <a routerLink="../../post/{{oglas._id}}">
+                <img *ngIf="oglas.slike.length" [src]="oglas.slike[0]" alt="{{oglas.title}}" class="oglas-image" />
+                <div class="oglas-text">
+                  <span class="oglas-title">{{oglas.title}}</span>
+                  <span class="oglas-content">{{oglas.content | slice:0:100}}<span *ngIf="oglas.content.length > 50"
+                      class="fade-out"></span>...</span>
+                </div>
+              </a>
+            </li>
+          </ng-container>
+        </ul>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

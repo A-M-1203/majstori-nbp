@@ -1,0 +1,22 @@
+<div class="container">
+  <mat-card class="card">
+    <mat-card-header class="card-header">
+      <mat-card-title>Izabrani majstori</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <ul>
+        <ng-container *ngFor="let item of ocene; let i = index">
+          <li class="majstor-item">
+            <img [src]="item.majstor?.profilePicture" alt="{{item.majstor}}" class="profile-picture" />
+            <div class="majstor-name">{{item.majstor?.ime}} {{item.majstor?.prezime}}</div>
+            <div class="majstor-rating" *ngIf="item.ocena">Vaša ocena: {{item.ocena}}</div>
+            <input class="score-imput" type="number" min="1" max="10" *ngIf="!item.ocena" [(ngModel)]="inputs[i]" />
+            <button mat-raised-button (click)="oceni(i, item.majstor?._id ?? '')" *ngIf="!item.ocena"
+              color="accent">Ocenite</button>
+            <button mat-raised-button (click)="goToChat(item._id)" class="chat-button">Razgovarajte</button>
+          </li>
+        </ng-container>
+      </ul>
+    </mat-card-content>
+  </mat-card>
+</div>

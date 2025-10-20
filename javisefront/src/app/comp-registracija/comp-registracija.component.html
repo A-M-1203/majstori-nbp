@@ -1,0 +1,16 @@
+<mat-card class="karta">
+    <mat-card-header>
+        <mat-card-title>Izaberite tip naloga</mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="dugmad">
+        <button mat-raised-button (click)="selectType(1)" color="accent">Klijent</button>
+        <button mat-raised-button (click)="selectType(2)" color="accent">Majstor</button>
+    </mat-card-content>
+    <mat-card-content>
+        <mat-divider></mat-divider>
+    </mat-card-content>
+    <mat-card-content>
+        <p>Već ste registrovani?</p>
+        <a routerLink="/">Ulogujte se!</a>
+    </mat-card-content>
+</mat-card>

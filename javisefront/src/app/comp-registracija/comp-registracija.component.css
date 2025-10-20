@@ -1,0 +1,27 @@
+.karta {
+    width: 400px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+button {
+    margin-top: 10px;
+    margin-bottom: 15px;
+}
+
+mat-card-header {
+    display: flex;
+    justify-content: center;
+}
+
+.dugmad {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+a {
+    color: #00ccff;
+    text-decoration: none;
+}

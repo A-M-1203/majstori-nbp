@@ -1,0 +1,43 @@
+.karta {
+    width: 400px;
+    position: absolute;
+    top: 55%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+input {
+    width: 95%;
+    height: 30px;
+}
+
+mat-divider {
+    margin-top: 15px;
+}
+
+button {
+    margin-top: 15px;
+}
+
+.sredina {
+    display: flex;
+    justify-content: center;
+}
+
+.mat-select-value {
+    display: inline-block;
+}
+
+mat-serlect {
+    margin-left: 1px;
+}
+
+mat-form-field {
+    width: 100%;
+    margin-bottom: 0px;
+}
+
+.dugme {
+    background-color: #00ccff !important;
+    color: white !important;
+}

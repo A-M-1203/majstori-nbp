@@ -1,0 +1,19 @@
+<div class="profile-card-container">
+    <mat-card class="profile-card">
+        <mat-card-header class="card-header">
+            <div class="profile-header">
+                <div class="profile-picture">
+                    <img [src]="majstor?.profilePicture" alt="Profile Picture">
+                </div>
+                <div class="profile-info">
+                    <mat-card-title class="majstor-name">{{ majstor?.ime }} {{ majstor?.prezime }}</mat-card-title>
+                </div>
+            </div>
+        </mat-card-header>
+        <mat-card-content>
+            <p><strong>Broj:</strong> {{ majstor?.broj }}</p>
+            <p><strong>Lokacija:</strong> {{ majstor?.lokacija?.naziv }}</p>
+            <p><strong>Adresa:</strong> {{ majstor?.adresa }}</p>
+        </mat-card-content>
+    </mat-card>
+</div>

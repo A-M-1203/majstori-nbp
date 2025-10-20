@@ -1,0 +1,54 @@
+<div class="container">
+  <mat-card class="card-left">
+    <mat-card-header class="card-header">
+      <mat-card-title>Oglasi</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <ul>
+        <ng-container *ngFor="let item of oglasi">
+          <li class="oglas-item">
+            <a routerLink="../../post/{{item._id}}">
+              <img *ngIf="item.slike.length" [src]="item.slike[0]" alt="{{item.title}}" class="oglas-image" />
+              <div class="oglas-text">
+                <span class="oglas-title">{{item.title}}</span>
+                <span class="oglas-content">{{item.content | slice:0:100}}<span *ngIf="item.content.length > 50"
+                    class="fade-out"></span>...</span>
+              </div>
+            </a>
+          </li>
+        </ng-container>
+      </ul>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="card-right">
+    <mat-card-header class="card-header">
+      <mat-card-title>Majstori</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="filter-container">
+        <mat-form-field appearance="fill" class="filter-field">
+          <mat-label>Izaberite Grad</mat-label>
+          <mat-select [(ngModel)]="selectedValue">
+            <mat-option *ngFor="let lokacija of lokacije" [value]="lokacija._id">{{lokacija.naziv}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <button mat-raised-button (click)="filtriraj()" class="filter-button" [disabled]="!isFormValid()">Filtrirajte po
+          gradu</button>
+        <button mat-raised-button (click)="ponistiFilter()" class="ponisti-button">Poništite filter</button>
+      </div>
+      <ul>
+        <ng-container *ngFor="let item of majstori">
+          <li class="majstor-item">
+            <a routerLink="../../majstor/{{item._id}}" class="majstor-link">
+              <img [src]="item.profilePicture" alt="{{item.ime}}" class="profile-picture" />
+              <span class="majstor-name">{{item.ime}} {{item.prezime}}</span>
+            </a>
+            <span class="majstor-rating">{{item.averageRating}}</span>
+            <mat-icon fontIcon="star" class="icon"></mat-icon>
+          </li>
+        </ng-container>
+      </ul>
+    </mat-card-content>
+  </mat-card>
+</div>

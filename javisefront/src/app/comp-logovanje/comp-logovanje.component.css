@@ -1,0 +1,34 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    position: relative;
+    z-index: 2;
+}
+
+.logo {
+    width: 576px;
+    height: 230px;
+    margin-bottom: 20px;
+}
+
+.karta {
+    width: 400px;
+}
+
+mat-form-field {
+    width: 100%;
+}
+
+.dugme {
+    background-color: #00ccff !important;
+    color: white !important;
+    margin-bottom: 22px;
+}
+
+a {
+    color: #00ccff;
+    text-decoration: none;
+}

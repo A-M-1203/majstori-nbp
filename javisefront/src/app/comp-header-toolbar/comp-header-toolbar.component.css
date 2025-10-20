@@ -1,0 +1,16 @@
+.spacer {
+    flex: 1 1 auto;
+}
+
+.logo {
+    height: 45px;
+    margin-left: 50px;
+}
+
+button {
+    margin-right: 50px;
+}
+
+mat-toolbar {
+    background-color: #00ccFF;
+}

@@ -1,0 +1,39 @@
+mat-form-field {
+  margin-bottom: 16px;
+}
+
+mat-dialog-content {
+  width: 400px;
+}
+
+.dugme {
+  background-color: #00ccff;
+  color: white;
+}
+
+.dugmeZaSliku {
+  background-color: #00ccff;
+  color: white;
+  margin-left: 25px;
+}
+
+textarea {
+  resize: none;
+  height: 200px !important;
+}
+
+.image-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.preview-image {
+  max-width: 100px;
+  max-height: 100px;
+  object-fit: cover;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin: 8px;
+}

@@ -1,4 +1,5 @@
 using majstori_nbp_server.Services;
+using Neo4j.Driver;
 using StackExchange.Redis;
 
 namespace majstori_nbp_server.Implementations;
@@ -7,9 +8,14 @@ public class RedisCacheService : ICacheService
 {
     private IDatabase _redisDb;
     private IServer serverConfig;
+    private IDriver driver;
 
     public RedisCacheService()
     {
+        string dbUri=Environment.GetEnvironmentVariable("NEO4J_URI")??"localhost";
+        string dbUser=Environment.GetEnvironmentVariable("NEO4J_USERNAME")??"root";
+        string dbPassword=Environment.GetEnvironmentVariable("NEO4J_PASSWORD")??"root";
+        driver=GraphDatabase.Driver(dbUri, AuthTokens.Basic(dbUser, dbPassword));
         var connection = ConnectionMultiplexer.Connect(new ConfigurationOptions
         {
             EndPoints =

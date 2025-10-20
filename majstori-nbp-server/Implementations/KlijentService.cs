@@ -53,12 +53,12 @@ public class KlijentService : IKlijentService
 
     public async Task<GetKlijentDTO?> CreateAsync(CreateKlijentDTO klijent)
     {
-        bool isCreated = await _emailService.CreateEmailAsync(klijent.Email);
+       /* bool isCreated = await _emailService.CreateEmailAsync(klijent.Email);
         if (isCreated is false)
         {
             return null;
         }
-
+        */
         string id = Guid.NewGuid().ToString();
         string key = "klijent:" + id;
         var entries = await _cacheService.CreateHashDataAsync(key, klijent);

@@ -5,15 +5,22 @@ using Microsoft.AspNetCore.Mvc;
 namespace majstori_nbp_server.Controllers;
 
 [ApiController]
-public class KlijentiController : ControllerBase
+public class KlijentController : ControllerBase
 {
     private readonly IKlijentService _klijentService;
 
-    public KlijentiController(IKlijentService klijentService)
+    public KlijentController(IKlijentService klijentService)
     {
         _klijentService = klijentService;
     }
 
+    /*[HttpPost(ApiEndpoints.V1.Klijenti.Signup)]
+    public IActionResult signup([FromBody] CreateKlijentDTO createKlijentDTO)
+    {
+        Console.WriteLine(createKlijentDTO);
+        return Ok();
+    }*/
+    
     [HttpGet(ApiEndpoints.V1.Klijenti.Emails)]
     public IActionResult Emails()
     {

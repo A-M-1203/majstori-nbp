@@ -1,0 +1,51 @@
+<mat-card class="karta">
+    <mat-card-content>
+        <p>Ime</p>
+        <mat-form-field appearance="fill">
+            <mat-label>Unesite Ime</mat-label>
+            <input matInput [(ngModel)]="ime">
+        </mat-form-field>
+        <p>Prezime</p>
+        <mat-form-field appearance="fill">
+            <mat-label>Unesite Prezime</mat-label>
+            <input matInput [(ngModel)]="prezime">
+        </mat-form-field>
+        <p>Broj telefona</p>
+        <mat-form-field appearance="fill">
+            <mat-label>Unesite Broj Telefona</mat-label>
+            <input matInput [(ngModel)]="brt">
+        </mat-form-field>
+        <p>Adresa</p>
+        <mat-form-field appearance="fill">
+            <mat-label>Unesite Adresu</mat-label>
+            <input matInput [(ngModel)]="adresa">
+        </mat-form-field>
+        <p>Grad</p>
+        <mat-form-field appearance="fill">
+            <mat-label>Izaberite Grad</mat-label>
+            <mat-select [(ngModel)]="selectedValue">
+                <mat-option *ngFor="let lokacija of nizLokacija" [value]="lokacija">
+                    {{ lokacija }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <p>Kakvim poslom se bavite?</p>
+        <mat-form-field appearance="fill">
+            <mat-label>Izaberite Kategorije</mat-label>
+            <mat-select [(ngModel)]="kategorije" multiple>
+                <ng-container *ngFor="let kategorija of nizKategorija">
+                    <mat-option *ngIf="kategorija.podkategorije && kategorija.podkategorije.length > 0" [value]="'disabled-' + kategorija._id" disabled>
+                        <div class="disabled-category">{{ kategorija.naziv }}</div>
+                    </mat-option>
+                    <mat-option *ngFor="let podkategorija of kategorija.podkategorije" [value]="podkategorija._id">
+                        {{ podkategorija.naziv }}
+                    </mat-option>
+                </ng-container>
+            </mat-select>
+        </mat-form-field>
+        <mat-divider></mat-divider>
+    </mat-card-content>
+    <mat-card-content class="sredina">
+        <button mat-raised-button color="accent" (click)="kreirajNalog()" [disabled]="!isFormValid()">Kreirajte nalog!</button>
+    </mat-card-content>
+</mat-card>

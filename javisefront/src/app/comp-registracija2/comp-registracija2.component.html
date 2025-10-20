@@ -1,0 +1,27 @@
+<mat-card class="karta">
+    <mat-card-content class="dole">
+        <p>E-mail adresa</p>
+        <mat-form-field>
+            <input matInput type="email" [formControl]="emailFormControl" [(ngModel)]="mail">
+            @if (emailFormControl.hasError('email') && !emailFormControl.hasError('required')) {
+            <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">Unesite valian E-mail</mat-error>
+            }
+            @if (emailFormControl.hasError('required')) {
+            <mat-error *ngIf="emailFormControl.hasError('required')">E-mail je <strong>neophodan</strong></mat-error>
+            }
+        </mat-form-field>
+        <p>Lozinka</p>
+        <mat-form-field>
+        <input matInput type="password" [(ngModel)]="pas" (ngModelChange)="checkPassword()">
+        </mat-form-field>
+        <ul>
+            <li [ngClass]="{'valid': passwordLengthValid, 'invalid': !passwordLengthValid}">Između 8 i 20 karaktera</li>
+            <li [ngClass]="{'valid': passwordHasNumber, 'invalid': !passwordHasNumber}">Najmanje 1 broj</li>
+            <li [ngClass]="{'valid': passwordHasCapital, 'invalid': !passwordHasCapital}">Najmanje 1 veliko slovo</li>
+        </ul>
+        <mat-divider></mat-divider>
+    </mat-card-content>
+    <mat-card-content class="sredina">
+        <button mat-raised-button color="accent" (click)="navigateToNext()" [disabled]="!isFormValid()">Nastavite</button>
+    </mat-card-content>
+</mat-card>

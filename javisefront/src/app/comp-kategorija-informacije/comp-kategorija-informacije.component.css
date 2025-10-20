@@ -1,0 +1,147 @@
+.container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 20px;
+    align-items: flex-start;
+}
+
+.card-left {
+    width: 40%;
+}
+
+.card-right {
+    width: 20%;
+}
+
+.card-header {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.card-left mat-card-content ul,
+.card-right mat-card-content ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.card-left mat-card-content li,
+.card-right mat-card-content li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 10px;
+}
+
+.oglas-image {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    margin-right: 10px;
+}
+
+.oglas-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.oglas-title {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #333;
+}
+
+.oglas-content {
+    font-size: 0.9em;
+    color: #666;
+    position: relative;
+    max-width: 200px;
+}
+
+.oglas-content {
+    font-size: 0.9em;
+    color: #666;
+    position: relative;
+    max-width: 400px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.majstor-name {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #333;
+    margin-right: auto;
+}
+
+.majstor-rating {
+    font-size: 1em;
+    color: #777;
+}
+
+mat-card-header mat-card-title {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+a {
+    color: black;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.oglas-item a,
+.majstor-item a {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.icon {
+    color: orange;
+}
+
+.filter-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.filter-field {
+    width: 100%;
+    margin-bottom: 0px;
+}
+
+.profile-picture {
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    margin-right: 10px;
+}
+
+.filter-button {
+    width: 100%;
+    margin-top: 0px;
+    background-color: #00ccff !important;
+    color: white !important;
+    width: auto;
+    margin-bottom: 15px;
+}
+
+.ponisti-button {
+    width: 100%;
+    margin-top: 0px;
+    background-color: #00ccff !important;
+    color: white !important;
+    width: auto;
+    margin-bottom: 15px;
+}

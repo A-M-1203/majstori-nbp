@@ -1,3 +1,4 @@
+using dotenv.net;
 using majstori_nbp_server.Implementations;
 using majstori_nbp_server.Services;
 using Microsoft.OpenApi.Models;
@@ -19,10 +20,23 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+var  MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+        policy  =>
+        {
+            policy.WithOrigins("http://localhost:4050");
+        });
+});
+
 builder.Services.AddScoped<ICacheService, RedisCacheService>();
 builder.Services.AddScoped<IMajstorService, MajstorService>();
 builder.Services.AddScoped<IKlijentService, KlijentService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+
+DotEnv.Load();
 
 var app = builder.Build();
 
