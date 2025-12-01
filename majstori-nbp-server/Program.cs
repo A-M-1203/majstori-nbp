@@ -23,6 +23,7 @@ builder.Services.AddScoped<ICacheService, RedisCacheService>();
 builder.Services.AddScoped<IMajstorService, MajstorService>();
 builder.Services.AddScoped<IKlijentService, KlijentService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 var app = builder.Build();
 
