@@ -14,10 +14,8 @@ public class CreateKlijentDTO
     [Required(ErrorMessage = "Prezime je obavezno polje.")]
     public required string Prezime { get; set; }
 
-    [MaxLength(20, ErrorMessage = "Maksimalna duzina broja telefona je 20 karaktera.")]
-    [Phone(ErrorMessage = "Nevalidan broj telefona.")]
-    [Required(ErrorMessage = "Broj telefona je obavezno polje.")]
-    public required string BrojTelefona { get; set; }
+    [Required(ErrorMessage = "PasswordHash je obavezno polje.")]
+    public required string PasswordHash { get; set; }
 
     [MaxLength(320, ErrorMessage = "Maksimalna duzina email adrese je 320 karaktera.")]
     [EmailAddress(ErrorMessage = "Nevalidna email adresa.")]

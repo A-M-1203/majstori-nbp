@@ -1,12 +1,11 @@
-namespace majstori_nbp_server.DTOs.MajstorDTOs;
+namespace majstori_nbp_server.DTOs.AuthDTOs;
 
-public class GetMajstorDTO
+public class RegisterMajstorDTO
 {
-    public Guid Id { get; set; }
     public required string Ime { get; set; }
     public required string Prezime { get; set; }
     public required string Email { get; set; }
-    public required string PasswordHash { get; set; }
+    public required string Password { get; set; }
     public required string Lokacija { get; set; }
     public required string BrojTelefona { get; set; }
     public string? Slika { get; set; }

@@ -29,5 +29,14 @@ public static class ApiEndpoints
             public const string Delete = $"{Base}/{{id}}";
             public const string Emails = $"{Base}/emails";
         }
+
+        public static class Auth
+        {
+            private const string Base = $"{VersionBase}/auth";
+
+            public const string RegisterMajstor = $"{Base}/register/majstor";
+            public const string RegisterKlijent = $"{Base}/register/klijent";
+            public const string Login = $"{Base}/login";
+        }
     }
 }

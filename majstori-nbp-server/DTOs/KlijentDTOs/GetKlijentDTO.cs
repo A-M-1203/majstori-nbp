@@ -3,8 +3,8 @@ namespace majstori_nbp_server.DTOs.KlijentDTOs;
 public class GetKlijentDTO
 {
     public Guid Id { get; set; }
-    public string Ime { get; set; } = string.Empty;
-    public string Prezime { get; set; } = string.Empty;
-    public string BrojTelefona { get; set; } = string.Empty;
-    public string Email { get; set; } = string.Empty;
+    public required string Ime { get; set; }
+    public required string Prezime { get; set; }
+    public required string Email { get; set; }
+    public required string PasswordHash { get; set; }
 }

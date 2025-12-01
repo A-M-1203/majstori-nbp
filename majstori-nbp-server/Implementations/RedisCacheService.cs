@@ -14,13 +14,13 @@ public class RedisCacheService : ICacheService
         {
             EndPoints =
             {
-                { "redis-16631.c300.eu-central-1-1.ec2.redns.redis-cloud.com", 16631 }
+                { "redis-18142.c300.eu-central-1-1.ec2.cloud.redislabs.com", 18142 }
             },
             User = "default",
-            Password = "zFPbn1BTJ9xRlpjlnrenDF3Cutn2lyC9"
+            Password = "XcXoCUx43Olxh5wn0Gop6STAQTlGcYgn"
         });
         _redisDb = connection.GetDatabase();
-        serverConfig = connection.GetServer("redis-16631.c300.eu-central-1-1.ec2.redns.redis-cloud.com", 16631);
+        serverConfig = connection.GetServer("redis-18142.c300.eu-central-1-1.ec2.cloud.redislabs.com", 18142);
     }
 
     public async IAsyncEnumerable<string> GetAllDataAsync(string keyPattern)
@@ -167,6 +167,10 @@ public class RedisCacheService : ICacheService
     {
         await foreach (var key in serverConfig.KeysAsync(pattern: keyPattern))
         {
+            var keyType = await _redisDb.KeyTypeAsync(key);
+            if (keyType != RedisType.Hash)
+                continue;
+
             var entries = await _redisDb.HashGetAllAsync(key);
             yield return (key!, entries.ToList());
         }
@@ -195,11 +199,7 @@ public class RedisCacheService : ICacheService
         foreach (var property in properties)
         {
             var propertyValue = property.GetValue(value);
-            if (propertyValue != null)
-            {
-                string stringValue = propertyValue.ToString()!;
-                entries.Add(new HashEntry(property.Name.ToLower(), stringValue));
-            }
+            entries.Add(new HashEntry(property.Name.ToLower(), propertyValue?.ToString() ?? ""));
         }
 
         if (entries.Count > 0)

@@ -8,6 +8,7 @@ public class MajstorService : IMajstorService
 {
     private readonly ICacheService _cacheService;
     private readonly IEmailService _emailService;
+    private readonly string _majstorNamespace = "majstor:";
 
     public MajstorService(ICacheService cacheService, IEmailService emailService)
     {
@@ -17,21 +18,30 @@ public class MajstorService : IMajstorService
 
     public IEnumerable<string> GetAllEmails()
     {
-        return _emailService.GetAllEmails();
+        return _emailService.GetAllEmails(_majstorNamespace);
+    }
+
+    public async Task<string?> GetEmailAsync(string email)
+    {
+        return await _emailService.GetEmailAsync(email);
     }
 
     public async IAsyncEnumerable<GetMajstorDTO> GetAllAsync()
     {
-        await foreach (var (key, entries) in _cacheService.GetAllHashDataAsync("majstor:*"))
+        await foreach (var (key, entries) in _cacheService.GetAllHashDataAsync($"{_majstorNamespace}*"))
         {
-            GetMajstorDTO majstor = new();
-            string id = key.Substring("majstor:".Length);
-            majstor.Id = Guid.Parse(id);
-
-            majstor.Ime = entries.FirstOrDefault(x => x.Name == "ime").Value!;
-            majstor.Prezime = entries.FirstOrDefault(x => x.Name == "prezime").Value!;
-            majstor.BrojTelefona = entries.FirstOrDefault(x => x.Name == "brojtelefona").Value!;
-            majstor.Email = entries.FirstOrDefault(x => x.Name == "email").Value!;
+            string id = key.Substring(_majstorNamespace.Length);
+            var majstor = new GetMajstorDTO
+            {
+                Id = Guid.Parse(id),
+                Ime = entries.First(x => x.Name == "ime").Value!,
+                Prezime = entries.First(x => x.Name == "prezime").Value!,
+                Email = entries.First(x => x.Name == "email").Value!,
+                PasswordHash = entries.First(x => x.Name == "passwordhash").Value!,
+                Lokacija = entries.First(x => x.Name == "lokacija").Value!,
+                BrojTelefona = entries.First(x => x.Name == "brojtelefona").Value!,
+                Slika = entries.First(x => x.Name == "slika").Value!
+            };
 
             yield return majstor;
 
@@ -40,54 +50,51 @@ public class MajstorService : IMajstorService
 
     public async Task<GetMajstorDTO?> GetByIdAsync(string id)
     {
-        string key = "majstor:" + id;
+        string key = _majstorNamespace + id;
         var entries = await _cacheService.GetHashDataAsync(key);
-        GetMajstorDTO? majstor = null;
-        if (entries is not null)
+        if (entries is null)
         {
-            majstor = entries.MapToGetMajstorDTO(id);
+            return null;
         }
 
-        return majstor;
+        return entries.MapToGetMajstorDTO(id);
     }
 
     public async Task<GetMajstorDTO?> CreateAsync(CreateMajstorDTO majstor)
     {
-        bool isCreated = await _emailService.CreateEmailAsync(majstor.Email);
+        string id = Guid.NewGuid().ToString();
+        string key = _majstorNamespace + id;
+        bool isCreated = await _emailService.CreateEmailAsync(_majstorNamespace, majstor.Email, key);
         if (isCreated is false)
         {
             return null;
         }
 
-        string id = Guid.NewGuid().ToString();
-        string key = "majstor:" + id;
         var entries = await _cacheService.CreateHashDataAsync(key, majstor);
-        GetMajstorDTO? noviMajstor = null;
-        if (entries is not null)
+        if (entries is null)
         {
-            noviMajstor = entries.MapToGetMajstorDTO(id);
+            return null;
         }
 
-        return noviMajstor;
+        return entries.MapToGetMajstorDTO(id);
     }
 
     public async Task<GetMajstorDTO?> UpdateAsync(string id, UpdateMajstorDTO majstor)
     {
         GetMajstorDTO? p = await GetByIdAsync(id);
+        string key = _majstorNamespace + id;
         if (p != null && majstor.Email != null)
         {
-            await _emailService.UpdateEmailAsync(majstor.Email, p.Email);
+            await _emailService.UpdateEmailAsync(_majstorNamespace, majstor.Email, p.Email, key);
         }
 
-        string key = "majstor:" + id;
         var entries = await _cacheService.UpdateHashDataAsync(key, majstor);
-        GetMajstorDTO? azuriraniMajstor = null;
-        if (entries is not null)
+        if (entries is null)
         {
-            azuriraniMajstor = entries.MapToGetMajstorDTO(id);
+            return null;
         }
 
-        return azuriraniMajstor;
+        return entries.MapToGetMajstorDTO(id);
     }
 
     public async Task<bool> DeleteAsync(string id)
@@ -95,9 +102,9 @@ public class MajstorService : IMajstorService
         GetMajstorDTO? p = await GetByIdAsync(id);
         if (p is not null)
         {
-            await _emailService.DeleteEmailAsync(p.Email);
+            await _emailService.DeleteEmailAsync(_majstorNamespace, p.Email);
         }
-        string key = "majstor:" + id;
+        string key = _majstorNamespace + id;
         bool isDeleted = await _cacheService.DeleteHashDataAsync(key);
 
         return isDeleted;
