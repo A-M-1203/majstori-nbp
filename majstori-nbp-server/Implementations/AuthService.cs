@@ -75,6 +75,7 @@ public class AuthService : IAuthService
         var majstor = registerRequest.MapToCreateMajstorDTO(hashedPassword);
         return await _majstorService.CreateAsync(majstor);
     }
+
     public async Task<GetKlijentDTO?> RegisterKlijentAsync(RegisterKlijentDTO registerRequest)
     {
         UserDTO user = registerRequest.MapToUserDTO();
@@ -103,12 +104,10 @@ public class AuthService : IAuthService
             issuer: _configuration.GetValue<string>("AppSettings:Issuer"),
             audience: _configuration.GetValue<string>("AppSettings:Audience"),
             claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(1),
+            expires: DateTime.UtcNow.AddHours(1),
             signingCredentials: credentials
         );
 
         return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
     }
-
-
 }

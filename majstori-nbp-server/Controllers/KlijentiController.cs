@@ -1,5 +1,6 @@
 using majstori_nbp_server.DTOs.KlijentDTOs;
 using majstori_nbp_server.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace majstori_nbp_server.Controllers;
@@ -12,6 +13,20 @@ public class KlijentiController : ControllerBase
     public KlijentiController(IKlijentService klijentService)
     {
         _klijentService = klijentService;
+    }
+
+    [Authorize(Roles = "klijent")]
+    [HttpGet("klijent")]
+    public ActionResult KlijentOnly()
+    {
+        return Ok("Klijent");
+    }
+
+    [Authorize(Roles = "klijent,majstor")]
+    [HttpGet("klijent-majstor")]
+    public ActionResult KlijentAndMajstor()
+    {
+        return Ok("Klijent i majstor");
     }
 
     [HttpGet(ApiEndpoints.V1.Klijenti.Emails)]
