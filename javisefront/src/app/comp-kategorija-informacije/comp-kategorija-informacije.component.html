@@ -30,7 +30,7 @@
         <mat-form-field appearance="fill" class="filter-field">
           <mat-label>Izaberite Grad</mat-label>
           <mat-select [(ngModel)]="selectedValue">
-            <mat-option *ngFor="let lokacija of lokacije" [value]="lokacija._id">{{lokacija.naziv}}</mat-option>
+            <mat-option *ngFor="let lokacija of lokacije" [value]="lokacija">{{lokacija}}</mat-option>
           </mat-select>
         </mat-form-field>
         <button mat-raised-button (click)="filtriraj()" class="filter-button" [disabled]="!isFormValid()">Filtrirajte po

@@ -21,7 +21,7 @@ export class MajstorGuard implements CanActivate {
     else{
         const type:any=jwtDecode(hasToken);
         console.log(type);
-        if(type.type!=="majstor"){
+        if(type.role!="majstor"){
             alert("Niste ulogovani kao korisnik");
           this.authService.logout();
           this.router.navigate(['/']);

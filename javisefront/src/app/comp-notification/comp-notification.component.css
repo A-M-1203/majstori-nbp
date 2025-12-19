@@ -1,0 +1,138 @@
+.notif-wrap {
+  position: relative;
+  display: inline-block;
+}
+
+/* Bell button */
+.bell {
+  position: relative;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 999px;
+}
+.bell:hover { background: rgba(0,0,0,0.06); }
+.bell-icon { font-size: 18px; }
+
+.badge {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: #ff3040;
+  color: white;
+  font-size: 11px;
+  line-height: 18px;
+  text-align: center;
+  font-weight: 700;
+  border: 2px solid white;
+}
+
+/* Dropdown panel */
+.dropdown {
+  position: absolute;
+  top: 42px;
+  right: 0;
+  width: min(360px, calc(100vw - 24px));
+  background: white;
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 14px;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.18);
+  overflow: hidden;
+  z-index: 2000;
+}
+
+.head, .foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: rgba(0,0,0,0.02);
+}
+
+.title {
+  font-weight: 800;
+  font-size: 14px;
+}
+
+.link-btn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 12px;
+  opacity: 0.8;
+}
+.link-btn:hover { opacity: 1; text-decoration: underline; }
+
+.list {
+  max-height: 380px;
+  overflow: auto;
+}
+
+.empty {
+  padding: 18px 12px;
+  opacity: 0.7;
+  font-size: 13px;
+}
+
+.row {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  gap: 10px;
+  padding: 10px 12px;
+  border: none;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.row:hover { background: rgba(0,0,0,0.04); }
+.row.unread { background: rgba(0, 149, 246, 0.07); } /* IG-like subtle blue */
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: rgba(0,0,0,0.06);
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-fallback {
+  font-weight: 900;
+  opacity: 0.7;
+}
+
+.msg {
+  font-size: 13px;
+  line-height: 1.25;
+}
+
+.meta {
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  opacity: 0.65;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #0095f6; /* IG blue */
+}

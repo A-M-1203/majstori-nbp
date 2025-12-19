@@ -1,0 +1,36 @@
+services:
+  websocketplumber:
+    build:
+      context: ./WebSocketServer
+      dockerfile: Dockerfile
+    container_name: "WebSocketPlumber"
+    env_file: 
+      - ./WebSocketServer/.env
+    ports: 
+      - 3100:4500
+    volumes:
+      - ./WebSocketServer:/app
+      - ws_node_modules:/app/node_modules
+    command: ["node","index.js"]
+    networks: [app]
+  frontend:
+    build:
+      context: ./javisefront
+      dockerfile: Dockerfile
+    container_name: FrontEndNBP
+    environment:
+      - NODE_ENV=development
+    ports:
+      - 4050:4200
+    volumes:
+      - ./javisefront:/app
+      - web_node_modules:/app/node_modules
+    command: ["ng","serve","--host","0.0.0.0"]
+    networks: [app]
+networks:
+  app:
+volumes:
+  web_node_modules:
+  ws_node_modules:
+  
+

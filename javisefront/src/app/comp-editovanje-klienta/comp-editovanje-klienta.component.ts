@@ -20,7 +20,7 @@ editujProfil() {
   formData.append('prezime', this.data.prezime);
   formData.append('broj', this.data.broj);
   //formData.append('podkategorija', this.kategorije);
-  formData.append('lokacija', this.data.lokacija._id);
+  formData.append('lokacija', this.data.lokacija);
   formData.append('adresa', this.data.adresa);
   formData.append('image', this.selectedFile);
   this.servisKli.editKorisnik(formData).subscribe((x)=>{
@@ -29,7 +29,7 @@ editujProfil() {
 }
   kategorije: any;
   selectedFile: any;
-  nizLokacija: Lokacija[] = [];
+  nizLokacija:string[] = ["Beograd","Aleksinac","Novi sad","Niš","Kragujevac","Vranje", "Ivanjica"] ;
   constructor(
     public dialogRef: MatDialogRef<CompGlavnaStranicaKlijentComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -37,10 +37,6 @@ editujProfil() {
     private servisKli: ServiceKlijent
   ) {
       console.log(data);
-      servisLok.vratiOb().subscribe(x=>{
-        this.nizLokacija = x;
-      });
-      servisLok.getLokacije();
   }
   onFileSelected(event: any): void {
     this.selectedFile = event.target.files[0] as File;

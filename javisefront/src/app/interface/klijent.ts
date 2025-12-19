@@ -6,5 +6,6 @@ export interface Klijent {
     broj: string,
     lokacija: string | any,
     adresa: string,
-    password: string
+    password: string,
+    profilePicture?:string
 }

@@ -19,7 +19,7 @@ export class PassGuard implements CanActivate {
       }
       else{
       const type:any=jwtDecode(hasToken);
-      if(type.type==="majstor"){
+      if(type.role=="majstor"){
         this.router.navigate(['/glavnaStranicaMajstor']);
       }
       else{

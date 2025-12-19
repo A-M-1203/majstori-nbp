@@ -26,8 +26,8 @@ export class ServiceMajstor {
         });
     }
 
-    getProfile(): Observable<{ime:string, prezime:string, email:string, broj:string, lokacija:Lokacija, adresa:string, podkategorija:{naziv:String,_id:String,kategorija:String}[], profilePicture:string}> {
-        return this.http.get<{ ime:string, prezime:string, email:string, broj:string, lokacija:Lokacija, adresa:string, podkategorija:{naziv:String,_id:String,kategorija:String}[], profilePicture:string}>("http://localhost:3000/korisnik/profile")
+    getProfile(): Observable<{ime:string, prezime:string, email:string, broj:string, lokacija:string, adresa:string, podkategorija:{naziv:String,_id:String,kategorija:String}[], profilePicture:string}> {
+        return this.http.get<{ ime:string, prezime:string, email:string, broj:string, lokacija:string, adresa:string, podkategorija:{naziv:String,_id:String,kategorija:String}[], profilePicture:string}>(url+"/majstor/profile")
             .pipe(
                 map(response => {
                     return { ime: response.ime, prezime: response.prezime, email: response.email, broj:response.broj, lokacija:response.lokacija, adresa:response.adresa, podkategorija:response.podkategorija, profilePicture:response.profilePicture};
@@ -42,6 +42,6 @@ export class ServiceMajstor {
         return this.http.get<{majstor:Majstor,ocene:Ocena[],prosek:Number,post:Oglas[]}>(url+"/majstor/"+id);
     }
     editMajstor(form: FormData): Observable<any> {
-        return this.http.put(url+"/korisnik", form);
+        return this.http.put(url+"/majstor", form);
     }
 }

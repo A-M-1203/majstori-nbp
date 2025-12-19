@@ -15,9 +15,9 @@
         <input matInput placeholder="Broj" [(ngModel)]="data.broj">
     </mat-form-field>
     <mat-form-field>
-        <mat-select [(ngModel)]="data.lokacija._id">
+        <mat-select [(ngModel)]="data.lokacija">
             @for (lokacija of nizLokacija; track lokacija) {
-            <mat-option [value]="lokacija._id">{{lokacija.naziv}}</mat-option>
+            <mat-option [value]="lokacija">{{lokacija}}</mat-option>
             }
         </mat-select>
     </mat-form-field>

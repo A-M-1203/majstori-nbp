@@ -19,9 +19,10 @@ export class CompLogovanjeComponent {
 
   mail = '';
   pasvord = '';
+  role='korisnik'
 
   login() {
-    this.logservice.login({ email: this.mail, password: this.pasvord })
+    this.logservice.login({ email: this.mail, password: this.pasvord },this.role)
     .subscribe(x=>{
       if (x.type === "korisnik") {
         this.router.navigate(['/glavnaStranicaKlient']);

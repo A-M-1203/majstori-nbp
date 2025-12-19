@@ -18,6 +18,11 @@
             <div>
                 <button mat-raised-button (click)="login()" class="dugme">Ulogujte se!</button>
             </div>
+            <mat-radio-group aria-label="Select an option" [(ngModel)]="role">
+              <mat-radio-button value="korisnik">korisnik</mat-radio-button>
+              <mat-radio-button value="majstor">majstor</mat-radio-button>
+            </mat-radio-group>
+
             <mat-divider></mat-divider>
         </mat-card-content>
         <mat-card-content>

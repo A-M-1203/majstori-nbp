@@ -5,7 +5,7 @@ namespace majstori_nbp_server.Mappings;
 
 public static class MajstorMappings
 {
-    public static List<GetMajstorDTO> MapToListOfGetMajstorDTO(this Dictionary<string, List<HashEntry>> data)
+    /*public static List<GetMajstorDTO> MapToListOfGetMajstorDTO(this Dictionary<string, List<HashEntry>> data)
     {
         List<GetMajstorDTO> majstori = new(data.Count);
         foreach (var entry in data)
@@ -37,5 +37,5 @@ public static class MajstorMappings
             BrojTelefona = entries[2].Value.ToString(),
             Email = entries[3].Value.ToString()
         };
-    }
+    }*/
 }

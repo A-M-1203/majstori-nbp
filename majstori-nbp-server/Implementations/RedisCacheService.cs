@@ -10,13 +10,10 @@ public class RedisCacheService : ICacheService
     private IServer serverConfig;
     private IDriver driver;
 
-    public RedisCacheService()
+    public RedisCacheService(IDriver driver)
     {
-        string dbUri=Environment.GetEnvironmentVariable("NEO4J_URI")??"localhost";
-        string dbUser=Environment.GetEnvironmentVariable("NEO4J_USERNAME")??"root";
-        string dbPassword=Environment.GetEnvironmentVariable("NEO4J_PASSWORD")??"root";
-        driver=GraphDatabase.Driver(dbUri, AuthTokens.Basic(dbUser, dbPassword));
-        var connection = ConnectionMultiplexer.Connect(new ConfigurationOptions
+        this.driver = driver;
+        /*var connection = ConnectionMultiplexer.Connect(new ConfigurationOptions
         {
             EndPoints =
             {
@@ -27,6 +24,7 @@ public class RedisCacheService : ICacheService
         });
         _redisDb = connection.GetDatabase();
         serverConfig = connection.GetServer("redis-16631.c300.eu-central-1-1.ec2.redns.redis-cloud.com", 16631);
+        */
     }
 
     public async IAsyncEnumerable<string> GetAllDataAsync(string keyPattern)

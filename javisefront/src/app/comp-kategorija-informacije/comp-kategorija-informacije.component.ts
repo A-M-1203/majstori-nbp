@@ -13,23 +13,20 @@ import { ServiceLokacija } from '../service/ser-lokacija';
   styleUrl: './comp-kategorija-informacije.component.css'
 })
 export class CompKategorijaInformacijeComponent implements OnInit{
-  
+
   id: string | null = null;
   oglasi: Oglas[]=[];
   majstori: Majstor[] = [];
   sviMajstori: Majstor[] = [];
   kategorija:string | null=null;
-  lokacije: Lokacija[] = [];
+  lokacije: string[] = ["Beograd","Aleksinac","Novi sad","Niš","Kragujevac","Vranje", "Ivanjica"] ;
   selectedValue: any;
-  
+
   constructor(
     private route: ActivatedRoute,
     private servisOglasi: ServiceOglas,private servisMajstor:ServiceMajstor,
     private servisLokacija: ServiceLokacija
-  ) { 
-    servisLokacija.vratiOb().subscribe(x=>{
-      this.lokacije = x;
-    });
+  ) {
     servisLokacija.getLokacije();
   }
 
@@ -43,7 +40,7 @@ export class CompKategorijaInformacijeComponent implements OnInit{
         this.servisOglasi.getOglasi("http://localhost:3000/post/filter?kategorija="+this.id).subscribe(x=>{
           this.oglasi=x.post;
         });
-        this.servisMajstor.getMajstori("http://localhost:3000/korisnik?kategorija="+this.id)
+        this.servisMajstor.getMajstori("http://localhost:5104/majstor?kategorija="+this.id)
         .subscribe( x=> {
           console.log(x);
           this.sviMajstori = x.majstors;
@@ -54,7 +51,7 @@ export class CompKategorijaInformacijeComponent implements OnInit{
         this.servisOglasi.getOglasi("http://localhost:3000/post/filter?podKategorija="+this.id).subscribe(x=>{
           this.oglasi=x.post;
         });
-        this.servisMajstor.getMajstori("http://localhost:3000/korisnik?podKategorija="+this.id)
+        this.servisMajstor.getMajstori("http://localhost:5104/majstor?podKategorija="+this.id)
         .subscribe( x=> {
           this.sviMajstori = x.majstors;
           this.majstori = x.majstors;

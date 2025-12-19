@@ -16,4 +16,7 @@ export class ServiceMessage{
             this.subject.next(x.messages);
         });
     }
+    sendMessage(message:Message):Observable<boolean>{
+      return this.http.post<boolean>(url+"/message",message);
+    }
 }

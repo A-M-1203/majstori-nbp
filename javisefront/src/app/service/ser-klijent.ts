@@ -23,14 +23,17 @@ export class ServiceKlijent {
     }
 
     getProfile(): Observable<{ime: string, prezime: string, profilePicture: string,adresa:string, lokacija:string,broj:string}> {
-        return this.http.get<{ ime: string, prezime: string, profilePicture: string,adresa:string, lokacija:string,broj:string}>("http://localhost:3000/korisnik/profile")
+        return this.http.get<{ ime: string, prezime: string, profilePicture: string,adresa:string, lokacija:string,broj:string}>(url+"/korisnik/profile")
             .pipe(
                 map(response => {
                     return { ime: response.ime, prezime: response.prezime, profilePicture: response.profilePicture,adresa:response.adresa,lokacija:response.lokacija,broj:response.broj };
                 })
             );
     }
+    getKlijentInfo(id:string):Observable<Klijent>{
+      return this.http.get<Klijent>(url+"/korisnik/"+id);
+    }
     editKorisnik(form: FormData): Observable<any> {
-        return this.http.put("http://localhost:3000/korisnik", form);
+        return this.http.put(url+"/korisnik", form);
     }
 }

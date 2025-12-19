@@ -11,8 +11,8 @@ export class ServiceLogovanje {
 
   constructor(private http: HttpClient,@Inject(PLATFORM_ID) private platformId: Object, private router: Router) { }
 
-  login(credentials: { email: string, password: string }): Observable<{token:string, type:string}> {
-    return this.http.post<{ token: string, message: string, type: string}>(url+"/korisnik/signin", credentials)
+  login(credentials: { email: string, password: string},type:string): Observable<{token:string, type:string}> {
+    return this.http.post<{ token: string, message: string, type: string}>(url+"/"+type+"/signin", credentials)
       .pipe(
         map(response => {
           sessionStorage.setItem('jwtToken',response.token);

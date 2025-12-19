@@ -51,7 +51,7 @@ public class KlijentController : ControllerBase
         );
     }
 
-    [HttpPost(ApiEndpoints.V1.Klijenti.Create)]
+    /*[HttpPost(ApiEndpoints.V1.Klijenti.Create)]
     public async Task<IActionResult> Create([FromBody] CreateKlijentDTO majstor)
     {
         GetKlijentDTO? noviMajstor = await _klijentService.CreateAsync(majstor);
@@ -67,7 +67,7 @@ public class KlijentController : ControllerBase
             detail: "Vec postoji nalog sa navedenom email adresom",
             statusCode: StatusCodes.Status400BadRequest
         );
-    }
+    }*/
 
     [HttpPut(ApiEndpoints.V1.Klijenti.Update)]
     public async Task<IActionResult> Update(string id, [FromBody] UpdateKlijentDTO majstor)

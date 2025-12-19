@@ -23,7 +23,7 @@ export class CompGlavnaStranicaMajstorComponent implements OnInit{
   prezime: any;
   email: string = '';
   broj: string = '';
-  lokacija: Lokacija | undefined;
+  lokacija: string='';
   adresa: string = '';
   podkategorija: {naziv:String,_id:String,kategorija:String}[] = [];
   profilePicture: string = '';

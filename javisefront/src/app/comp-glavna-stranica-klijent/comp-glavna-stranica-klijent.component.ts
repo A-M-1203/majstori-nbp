@@ -45,7 +45,7 @@ export class CompGlavnaStranicaKlijentComponent {
       this.broj=x.broj;
       this.lokacija=x.lokacija;
     });
-  
+
   }
   odNaIzabrane() {
     this.router.navigate(["glavnaStranicaKlient/izabrani"]);

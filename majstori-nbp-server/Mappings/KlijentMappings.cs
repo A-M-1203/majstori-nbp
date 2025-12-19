@@ -7,7 +7,7 @@ public static class KlijentMappings
 {
     public static List<GetKlijentDTO> MapToListOfGetKlijentDTO(this Dictionary<string, List<HashEntry>> data)
     {
-        List<GetKlijentDTO> klijenti = new(data.Count);
+        /*List<GetKlijentDTO> klijenti = new(data.Count);
         foreach (var entry in data)
         {
             GetKlijentDTO klijent = new();
@@ -24,18 +24,20 @@ public static class KlijentMappings
             klijenti.Add(klijent);
         }
 
-        return klijenti;
+        return klijenti;*/
+        throw new NotImplementedException();
     }
 
     public static GetKlijentDTO MapToGetKlijentDTO(this List<HashEntry> entries, string id)
     {
-        return new GetKlijentDTO
+        /*return new GetKlijentDTO
         {
             Id = Guid.Parse(id),
             Ime = entries[0].Value.ToString(),
             Prezime = entries[1].Value.ToString(),
             BrojTelefona = entries[2].Value.ToString(),
             Email = entries[3].Value.ToString()
-        };
+        };*/
+        throw new NotImplementedException();
     }
 }

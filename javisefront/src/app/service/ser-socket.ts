@@ -6,9 +6,9 @@ import { io, Socket } from 'socket.io-client';
 })
 export class SocketService {
   private socket: Socket;
-  
+
   constructor() {
-    this.socket = io('http://localhost:3000'); 
+    this.socket = io('http://localhost:3100');
   }
 
   joinRoom(room: string) {
@@ -22,7 +22,7 @@ export class SocketService {
   }
 
   onNewMessage(callback: (message: any) => void) {
-    this.socket.off('newMessage'); 
+    this.socket.off('newMessage');
     this.socket.on('newMessage', callback);
   }
 

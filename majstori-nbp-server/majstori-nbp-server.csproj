@@ -8,12 +8,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BCrypt" Version="1.0.0" />
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="dotenv.net" Version="4.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.22" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.19" />
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="9.0.9" />
     <PackageReference Include="Neo4j.Driver" Version="5.28.3" />
     <PackageReference Include="StackExchange.Redis" Version="2.9.25" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+    <PackageReference Include="Ulid" Version="1.4.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="images\" />
   </ItemGroup>
 
 </Project>

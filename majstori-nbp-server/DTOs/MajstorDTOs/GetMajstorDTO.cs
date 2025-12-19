@@ -1,10 +1,31 @@
+using majstori_nbp_server.DTOs.KategorijeDTOs;
+
 namespace majstori_nbp_server.DTOs.MajstorDTOs;
 
 public class GetMajstorDTO
 {
-    public Guid Id { get; set; }
-    public string Ime { get; set; } = string.Empty;
-    public string Prezime { get; set; } = string.Empty;
-    public string BrojTelefona { get; set; } = string.Empty;
-    public string Email { get; set; } = string.Empty;
+    public string _id { get; set; }
+    
+    public  string ime { get; set; }
+
+    
+    public string prezime { get; set; }
+
+    
+    public  string broj { get; set; }
+
+   
+    public  string email { get; set; }
+    
+  
+    public  string adresa { get; set; }
+    
+  
+    public  string lokacija { get; set; }
+
+    public string profilePicture { get; set; }
+
+    public List<PodkategorijaDTO> podkategorija { get; set; }
+
+    
 }

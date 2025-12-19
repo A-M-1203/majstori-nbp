@@ -26,11 +26,7 @@ export class CompEditovanjeProfilaMajstorComponent {
     serviceKat.vratiOb().subscribe(x=>{
       this.nizKategorija = x;
     })
-    serviceKat.getKategorije()
-    servisLok.vratiOb().subscribe(x=>{
-      this.nizLokacija = x;
-    });
-    servisLok.getLokacije();
+    serviceKat.getKategorije();
   }
 
   editujProfil() {
@@ -42,14 +38,14 @@ export class CompEditovanjeProfilaMajstorComponent {
     for (let i = 0; i < this.kategorije.length; i++) {
         formData.append("podkategorija[]",this.kategorije[i]);
     }
-    formData.append('lokacija', this.data.lokacija._id);
+    formData.append('lokacija', this.data.lokacija);
     formData.append('adresa', this.data.adresa);
     formData.append('image', this.selectedFile);
 
     this.servisMaj.editMajstor(formData).subscribe((x)=>{
       location.reload();
     })
-    
+
     this.servisMaj.editMajstor(formData).subscribe(x => {
       this.dialogRef.close();
     });
@@ -77,7 +73,7 @@ export class CompEditovanjeProfilaMajstorComponent {
   }
 
   nizKategorija: Kategorija[] = [];
-  nizLokacija: Lokacija[] = [];
+  nizLokacija: string[] =  ["Beograd","Aleksinac","Novi sad","Niš","Kragujevac","Vranje", "Ivanjica"];
 
   closeDialog() {
     this.dialogRef.close();
