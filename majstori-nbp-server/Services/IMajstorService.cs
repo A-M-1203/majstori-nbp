@@ -4,7 +4,7 @@ namespace majstori_nbp_server.Services;
 
 public interface IMajstorService
 {
-    IEnumerable<string> GetAllEmails();
+    Task<IEnumerable<string>> GetAllEmailsAsync();
     Task<string?> GetEmailAsync(string email);
     IAsyncEnumerable<GetMajstorDTO> GetAllAsync();
     Task<GetMajstorDTO?> GetByIdAsync(string id);

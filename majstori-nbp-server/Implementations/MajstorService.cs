@@ -16,9 +16,9 @@ public class MajstorService : IMajstorService
         _emailService = emailService;
     }
 
-    public IEnumerable<string> GetAllEmails()
+    public async Task<IEnumerable<string>> GetAllEmailsAsync()
     {
-        return _emailService.GetAllEmails(_majstorNamespace);
+        return await _emailService.GetAllEmailsAsync(_majstorNamespace);
     }
 
     public async Task<string?> GetEmailAsync(string email)
@@ -28,8 +28,13 @@ public class MajstorService : IMajstorService
 
     public async IAsyncEnumerable<GetMajstorDTO> GetAllAsync()
     {
-        await foreach (var (key, entries) in _cacheService.GetAllHashDataAsync($"{_majstorNamespace}*"))
+        await foreach (var key in _cacheService.GetAllKeysAsync($"{_majstorNamespace}*"))
         {
+            if (await _cacheService.IsHashKeyAsync(key) is false)
+                continue;
+            var entries = await _cacheService.GetHashDataAsync(key);
+            if (entries is null || entries.Count == 0)
+                continue;
             string id = key.Substring(_majstorNamespace.Length);
             var majstor = new GetMajstorDTO
             {
@@ -44,7 +49,6 @@ public class MajstorService : IMajstorService
             };
 
             yield return majstor;
-
         }
     }
 
@@ -70,7 +74,7 @@ public class MajstorService : IMajstorService
             return null;
         }
 
-        var entries = await _cacheService.CreateHashDataAsync(key, majstor);
+        var entries = await _cacheService.CreateOrUpdateHashDataAsync(key, majstor);
         if (entries is null)
         {
             return null;
@@ -88,7 +92,7 @@ public class MajstorService : IMajstorService
             await _emailService.UpdateEmailAsync(_majstorNamespace, majstor.Email, p.Email, key);
         }
 
-        var entries = await _cacheService.UpdateHashDataAsync(key, majstor);
+        var entries = await _cacheService.CreateOrUpdateHashDataAsync(key, majstor);
         if (entries is null)
         {
             return null;

@@ -11,14 +11,19 @@ public class EmailService : IEmailService
         _cacheService = cacheService;
     }
 
-    public IEnumerable<string> GetAllEmails(string role)
+    public async Task<IEnumerable<string>> GetAllEmailsAsync(string role)
     {
-        return _cacheService.GetAllSetData(role + "emails");
+        var list = new List<string>();
+        await foreach (var email in _cacheService.GetAllSetDataAsync(role + "emails"))
+        {
+            list.Add(email);
+        }
+        return list;
     }
 
     public async Task<string?> GetEmailAsync(string email)
     {
-        return await _cacheService.GetDataAsync(email);
+        return await _cacheService.GetStringAsync(email);
     }
 
     public async Task<bool> CheckIfExistsAsync(string role, string email)
@@ -34,7 +39,7 @@ public class EmailService : IEmailService
             return false;
         }
 
-        return await _cacheService.CreateDataAsync(email, userId);
+        return await _cacheService.CreateOrUpdateStringAsync(email, userId);
     }
 
     public async Task<bool> UpdateEmailAsync(string role, string newEmail, string oldEmail, string userId)

@@ -2,7 +2,7 @@ namespace majstori_nbp_server.Services;
 
 public interface IEmailService
 {
-    IEnumerable<string> GetAllEmails(string role);
+    Task<IEnumerable<string>> GetAllEmailsAsync(string role);
     Task<string?> GetEmailAsync(string email);
     Task<bool> CheckIfExistsAsync(string role, string email);
     Task<bool> CreateEmailAsync(string role, string email, string userId);

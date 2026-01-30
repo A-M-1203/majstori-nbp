@@ -4,30 +4,29 @@ namespace majstori_nbp_server.Services;
 
 public interface ICacheService
 {
-    IAsyncEnumerable<string> GetAllDataAsync(string keyPattern);
-    Task<string?> GetDataAsync(string key);
-    Task<bool> CreateDataAsync(string key, string value);
-    Task<bool> CreateDataWithExpiryAsync(string key, string value, TimeSpan expiry);
-    Task<bool> UpdateDataAsync(string key, string newValue);
-    Task<bool> UpdateDataWithExpiryAsync(string key, string newValue, TimeSpan expiry);
-    Task<bool> DeleteDataAsync(string key);
+    IAsyncEnumerable<string> GetAllKeysAsync(string keyPattern);
+    IAsyncEnumerable<string> GetAllStringsAsync(string keyPattern);
+    Task<string?> GetStringAsync(string key);
+    Task<bool> CreateOrUpdateStringAsync(string key, string value);
+    Task<bool> CreateOrUpdateStringWithExpiryAsync(string key, string value, TimeSpan expiry);
+    Task<bool> DeleteStringAsync(string key);
 
-    IEnumerable<string> GetAllSetData(string key);
+    IAsyncEnumerable<string> GetAllSetDataAsync(string key);
     Task<bool> SetDataExistsAsync(string key, string value);
     Task<bool> CreateSetDataAsync(string key, string value);
     Task<bool> UpdateSetDataAsync(string key, string oldValue, string newValue);
     Task<bool> DeleteSetDataAsync(string key, string value);
 
-    IAsyncEnumerable<(string Value, double Score)> GetAllSortedSetData(string key, long pageSize, Order order);
+    IAsyncEnumerable<double> GetAllSortedSetData(string key, long pageSize, Order order);
     Task<double> CreateOrIncrementSortedSetDataAsync(string key, string value, int score);
     Task<bool> UpdateSortedSetDataAsync(string key, string oldValue, string newValue);
     Task<bool> DeleteSortedSetDataAsync(string key, string value);
 
-    IAsyncEnumerable<(string Key, List<HashEntry> Entries)> GetAllHashDataAsync(string keyPattern);
+    IAsyncEnumerable<List<HashEntry>> GetAllHashDataAsync(string keyPattern);
     Task<List<HashEntry>?> GetHashDataAsync(string key);
-    Task<List<HashEntry>?> CreateHashDataAsync<T>(string key, T value);
-    Task<List<HashEntry>?> UpdateHashDataAsync<T>(string key, T value);
+    Task<List<HashEntry>?> CreateOrUpdateHashDataAsync<T>(string key, T value);
     Task<bool> DeleteHashDataAsync(string key);
+    Task<bool> IsHashKeyAsync(string key);
 
     Task<bool> SetKeyExpiryTimeAsync(string key, TimeSpan expiryTime);
 }

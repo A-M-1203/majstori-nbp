@@ -30,9 +30,9 @@ public class KlijentiController : ControllerBase
     }
 
     [HttpGet(ApiEndpoints.V1.Klijenti.Emails)]
-    public IActionResult Emails()
+    public async Task<IActionResult> Emails()
     {
-        return Ok(_klijentService.GetAllEmails());
+        return Ok(await _klijentService.GetAllEmailsAsync());
     }
 
     [HttpGet(ApiEndpoints.V1.Klijenti.GetAll)]
@@ -60,12 +60,12 @@ public class KlijentiController : ControllerBase
     }
 
     [HttpPost(ApiEndpoints.V1.Klijenti.Create)]
-    public async Task<IActionResult> Create([FromBody] CreateKlijentDTO majstor)
+    public async Task<IActionResult> Create([FromBody] CreateKlijentDTO klijent)
     {
-        GetKlijentDTO? noviMajstor = await _klijentService.CreateAsync(majstor);
-        if (noviMajstor is not null)
+        GetKlijentDTO? noviKlijent = await _klijentService.CreateAsync(klijent);
+        if (noviKlijent is not null)
         {
-            return CreatedAtAction(nameof(GetById), new { id = noviMajstor.Id.ToString() }, noviMajstor);
+            return CreatedAtAction(nameof(GetById), new { id = noviKlijent.Id.ToString() }, noviKlijent);
         }
 
         return Problem
@@ -78,12 +78,12 @@ public class KlijentiController : ControllerBase
     }
 
     [HttpPut(ApiEndpoints.V1.Klijenti.Update)]
-    public async Task<IActionResult> Update(string id, [FromBody] UpdateKlijentDTO majstor)
+    public async Task<IActionResult> Update(string id, [FromBody] UpdateKlijentDTO klijent)
     {
-        GetKlijentDTO? azuriraniMajstor = await _klijentService.UpdateAsync(id, majstor);
-        if (azuriraniMajstor is not null)
+        GetKlijentDTO? azuriraniKlijent = await _klijentService.UpdateAsync(id, klijent);
+        if (azuriraniKlijent is not null)
         {
-            return Ok(azuriraniMajstor);
+            return Ok(azuriraniKlijent);
         }
 
         return Problem

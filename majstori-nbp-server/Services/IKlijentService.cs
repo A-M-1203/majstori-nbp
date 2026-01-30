@@ -4,7 +4,7 @@ namespace majstori_nbp_server.Services;
 
 public interface IKlijentService
 {
-    IEnumerable<string> GetAllEmails();
+    Task<IEnumerable<string>> GetAllEmailsAsync();
     Task<string?> GetEmailAsync(string email);
     Task<string?> GetUserId(string email);
     IAsyncEnumerable<GetKlijentDTO> GetAllAsync();

@@ -15,9 +15,9 @@ public class MajstoriController : ControllerBase
     }
 
     [HttpGet(ApiEndpoints.V1.Majstori.Emails)]
-    public IActionResult Emails()
+    public async Task<IActionResult> Emails()
     {
-        return Ok(_majstorService.GetAllEmails());
+        return Ok(await _majstorService.GetAllEmailsAsync());
     }
 
     [HttpGet(ApiEndpoints.V1.Majstori.GetAll)]

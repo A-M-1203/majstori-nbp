@@ -10,20 +10,16 @@ public class RedisCacheService : ICacheService
 
     public RedisCacheService()
     {
-        var connection = ConnectionMultiplexer.Connect(new ConfigurationOptions
-        {
-            EndPoints =
-            {
-                { "redis-18142.c300.eu-central-1-1.ec2.cloud.redislabs.com", 18142 }
-            },
-            User = "default",
-            Password = "XcXoCUx43Olxh5wn0Gop6STAQTlGcYgn"
-        });
+        var connection = ConnectionMultiplexer.Connect("localhost:6379");
         _redisDb = connection.GetDatabase();
-        serverConfig = connection.GetServer("redis-18142.c300.eu-central-1-1.ec2.cloud.redislabs.com", 18142);
+        serverConfig = connection.GetServer("localhost:6379");
     }
 
-    public async IAsyncEnumerable<string> GetAllDataAsync(string keyPattern)
+
+
+    // -------------- Redis String --------------
+
+    public async IAsyncEnumerable<string> GetAllKeysAsync(string keyPattern)
     {
         await foreach (var key in serverConfig.KeysAsync(pattern: keyPattern))
         {
@@ -31,46 +27,48 @@ public class RedisCacheService : ICacheService
         }
     }
 
-    public async Task<string?> GetDataAsync(string key)
+    public async IAsyncEnumerable<string> GetAllStringsAsync(string keyPattern)
     {
-        return (await _redisDb.StringGetAsync(key)).ToString();
+        await foreach (var key in serverConfig.KeysAsync(pattern: keyPattern))
+        {
+            var keyType = await _redisDb.KeyTypeAsync(key);
+            if (keyType != RedisType.String)
+                continue;
+            var value = await _redisDb.StringGetAsync(key);
+            yield return value.ToString();
+        }
     }
 
-    public async Task<bool> CreateDataAsync(string key, string value)
+    public async Task<string?> GetStringAsync(string key)
     {
-        bool isCreated = await _redisDb.StringSetAsync(key, value, when: When.NotExists);
-        return isCreated;
+        var value = await _redisDb.StringGetAsync(key);
+        if (value.IsNullOrEmpty)
+            return null;
+        return value.ToString();
     }
 
-    public async Task<bool> CreateDataWithExpiryAsync(string key, string value, TimeSpan expiry)
+    public async Task<bool> CreateOrUpdateStringAsync(string key, string value)
     {
-        bool isCreated = await _redisDb.StringSetAsync(key, value, expiry, when: When.NotExists);
-        return isCreated;
+        return await _redisDb.StringSetAsync(key, value);
     }
 
-    public async Task<bool> UpdateDataAsync(string key, string newValue)
+    public async Task<bool> CreateOrUpdateStringWithExpiryAsync(string key, string value, TimeSpan expiry)
     {
-        bool isUpdated = await _redisDb.StringSetAsync(key, newValue, when: When.Exists);
-        return isUpdated;
+        return await _redisDb.StringSetAsync(key, value, expiry);
     }
 
-    public async Task<bool> UpdateDataWithExpiryAsync(string key, string newValue, TimeSpan expiry)
+    public async Task<bool> DeleteStringAsync(string key)
     {
-        bool isUpdated = await _redisDb.StringSetAsync(key, newValue, expiry, when: When.Exists);
-        return isUpdated;
-    }
-
-    public async Task<bool> DeleteDataAsync(string key)
-    {
-        bool isRemoved = await _redisDb.KeyDeleteAsync(key);
-        return isRemoved;
+        return await _redisDb.KeyDeleteAsync(key);
     }
 
 
 
-    public IEnumerable<string> GetAllSetData(string key)
+    // -------------- Redis Set --------------
+
+    public async IAsyncEnumerable<string> GetAllSetDataAsync(string key)
     {
-        var members = _redisDb.SetScan(key);
+        var members = await _redisDb.SetMembersAsync(key);
         foreach (var member in members)
         {
             yield return member.ToString();
@@ -95,8 +93,7 @@ public class RedisCacheService : ICacheService
             return false;
         }
 
-        bool isUpdated = await _redisDb.SetAddAsync(key, newValue);
-        return isUpdated;
+        return await _redisDb.SetAddAsync(key, newValue);
     }
 
     public async Task<bool> DeleteSetDataAsync(string key, string value)
@@ -106,9 +103,11 @@ public class RedisCacheService : ICacheService
 
 
 
-    public async IAsyncEnumerable<(string Value, double Score)> GetAllSortedSetData(string key,
-                                                                            long pageSize = 100,
-                                                                            Order order = Order.Descending)
+    // -------------- Redis Sorted Set --------------
+
+    public async IAsyncEnumerable<double> GetAllSortedSetData(string key,
+                                                             long pageSize = 100,
+                                                             Order order = Order.Descending)
     {
         long start = 0;
 
@@ -124,7 +123,7 @@ public class RedisCacheService : ICacheService
 
             foreach (var entry in entries)
             {
-                yield return (entry.Element.ToString(), entry.Score);
+                yield return entry.Score;
             }
 
             start += pageSize;
@@ -151,19 +150,19 @@ public class RedisCacheService : ICacheService
             return false;
         }
 
-        bool isUpdated = await _redisDb.SortedSetAddAsync(key, oldValue, score.Value);
-        return isUpdated;
+        return await _redisDb.SortedSetAddAsync(key, oldValue, score.Value);
     }
 
     public async Task<bool> DeleteSortedSetDataAsync(string key, string value)
     {
-        bool isRemoved = await _redisDb.SortedSetRemoveAsync(key, value);
-        return isRemoved;
+        return await _redisDb.SortedSetRemoveAsync(key, value);
     }
 
 
 
-    public async IAsyncEnumerable<(string Key, List<HashEntry> Entries)> GetAllHashDataAsync(string keyPattern)
+    // -------------- Redis Hash --------------
+
+    public async IAsyncEnumerable<List<HashEntry>> GetAllHashDataAsync(string keyPattern)
     {
         await foreach (var key in serverConfig.KeysAsync(pattern: keyPattern))
         {
@@ -172,7 +171,7 @@ public class RedisCacheService : ICacheService
                 continue;
 
             var entries = await _redisDb.HashGetAllAsync(key);
-            yield return (key!, entries.ToList());
+            yield return entries.ToList();
         }
     }
 
@@ -186,13 +185,8 @@ public class RedisCacheService : ICacheService
         return entries.ToList();
     }
 
-    public async Task<List<HashEntry>?> CreateHashDataAsync<T>(string key, T value)
+    public async Task<List<HashEntry>?> CreateOrUpdateHashDataAsync<T>(string key, T value)
     {
-        if (await _redisDb.KeyExistsAsync(key))
-        {
-            return null;
-        }
-
         var properties = typeof(T).GetProperties();
         var entries = new List<HashEntry>();
 
@@ -211,54 +205,19 @@ public class RedisCacheService : ICacheService
         return null;
     }
 
-    public async Task<List<HashEntry>?> UpdateHashDataAsync<T>(string key, T value)
-    {
-        bool exists = await _redisDb.KeyExistsAsync(key);
-        var entries = new List<HashEntry>();
-        if (exists)
-        {
-            var properties = typeof(T).GetProperties();
-
-            foreach (var property in properties)
-            {
-                var propertyValue = property.GetValue(value);
-                if (propertyValue != null)
-                {
-                    string stringValue = propertyValue.ToString()!;
-                    entries.Add(new HashEntry(property.Name.ToLower(), stringValue));
-                }
-            }
-
-            if (entries.Count > 0)
-            {
-                await _redisDb.HashSetAsync(key, entries.ToArray());
-                return await GetHashDataAsync(key);
-            }
-        }
-
-        return entries;
-    }
-
     public async Task<bool> DeleteHashDataAsync(string key)
     {
-        bool isRemoved = await DeleteDataAsync(key);
-        return isRemoved;
+        return await DeleteStringAsync(key);
     }
 
-
+    public async Task<bool> IsHashKeyAsync(string key)
+    {
+        var keyType = await _redisDb.KeyTypeAsync(key);
+        return keyType == RedisType.Hash;
+    }
 
     public async Task<bool> SetKeyExpiryTimeAsync(string key, TimeSpan expiryTime)
     {
-        bool isSet = await _redisDb.KeyExpireAsync(key, expiryTime);
-        if (isSet is true)
-        {
-            Console.WriteLine($"Vreme vazenja kljuca '{key}' je postavljeno na {expiryTime.TotalSeconds} sekundi.");
-        }
-        else
-        {
-            Console.WriteLine($"Vreme vazenja kljuca '{key}' nije postavljeno.");
-        }
-
-        return isSet;
+        return await _redisDb.KeyExpireAsync(key, expiryTime);
     }
 }

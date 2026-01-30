@@ -16,9 +16,9 @@ public class KlijentService : IKlijentService
         _emailService = emailService;
     }
 
-    public IEnumerable<string> GetAllEmails()
+    public async Task<IEnumerable<string>> GetAllEmailsAsync()
     {
-        return _emailService.GetAllEmails(_klijentNamespace);
+        return await _emailService.GetAllEmailsAsync(_klijentNamespace);
     }
 
     public async Task<string?> GetEmailAsync(string email)
@@ -28,13 +28,18 @@ public class KlijentService : IKlijentService
 
     public async Task<string?> GetUserId(string email)
     {
-        return await _cacheService.GetDataAsync(email);
+        return await _cacheService.GetStringAsync(email);
     }
 
     public async IAsyncEnumerable<GetKlijentDTO> GetAllAsync()
     {
-        await foreach (var (key, entries) in _cacheService.GetAllHashDataAsync($"{_klijentNamespace}*"))
+        await foreach (var key in _cacheService.GetAllKeysAsync($"{_klijentNamespace}*"))
         {
+            if (await _cacheService.IsHashKeyAsync(key) is false)
+                continue;
+            var entries = await _cacheService.GetHashDataAsync(key);
+            if (entries is null || entries.Count == 0)
+                continue;
             string id = key.Substring(_klijentNamespace.Length);
             var klijent = new GetKlijentDTO
             {
@@ -46,7 +51,6 @@ public class KlijentService : IKlijentService
             };
 
             yield return klijent;
-
         }
     }
 
@@ -72,13 +76,13 @@ public class KlijentService : IKlijentService
             return null;
         }
 
-        var entries = await _cacheService.CreateHashDataAsync(key, klijent);
+        var entries = await _cacheService.CreateOrUpdateHashDataAsync(key, klijent);
         if (entries is null)
         {
             return null;
         }
 
-        await _cacheService.CreateDataAsync(klijent.Email, key);
+        await _cacheService.CreateOrUpdateStringAsync(klijent.Email, key);
 
         return entries.MapToGetKlijentDTO(id);
     }
@@ -92,7 +96,7 @@ public class KlijentService : IKlijentService
             await _emailService.UpdateEmailAsync(_klijentNamespace, klijent.Email, p.Email, key);
         }
 
-        var entries = await _cacheService.UpdateHashDataAsync(key, klijent);
+        var entries = await _cacheService.CreateOrUpdateHashDataAsync(key, klijent);
         if (entries is null)
         {
             return null;
