@@ -258,6 +258,7 @@ public class KlijentService : IKlijentService
                 bool verify = BCrypt.Net.BCrypt.Verify(password, node.Properties["password"]?.As<string>() ?? "");
                 if (verify)
                 {
+                    //Umesto generateJwt treba da se vrati random string i stavi ga u redis da se cuva
                     return _wrapper.GenerateJwtToken(node.Properties["_id"]?.As<string>() ?? "", "korisnik");
                 }
 

@@ -23,6 +23,7 @@ public class JwtAuthorizeFilter : IAuthorizationFilter
         {
             try
             {
+                //umesto jwt treba da uzima userID i role iz redisa na osnovu tokena
                 var claims = _wrapper.ValidateJwtToken(token);
                 var userId = claims.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 var role = claims.FindFirst(ClaimTypes.Role)?.Value;

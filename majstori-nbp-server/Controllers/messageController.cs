@@ -11,6 +11,7 @@ public class messageController
     [Route("{id}")]
     public async Task<IActionResult> getMessages(string id)
     {
+        //Ovo je id chata
         throw new NotImplementedException();
     }
 
