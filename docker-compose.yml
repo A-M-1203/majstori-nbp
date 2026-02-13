@@ -13,6 +13,7 @@ services:
       - ws_node_modules:/app/node_modules
     command: ["node","index.js"]
     networks: [app]
+
   frontend:
     build:
       context: ./javisefront
@@ -27,10 +28,21 @@ services:
       - web_node_modules:/app/node_modules
     command: ["ng","serve","--host","0.0.0.0"]
     networks: [app]
+
+  redis:
+    image: redis:7
+    container_name: majstori-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+    networks: [app]
+
 networks:
   app:
+
 volumes:
   web_node_modules:
   ws_node_modules:
-  
-
+  redis-data:

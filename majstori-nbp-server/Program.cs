@@ -69,6 +69,8 @@ builder.Services.AddCors(options =>
             // use AllowCredentials() only if you really need cookies/auth
             //.AllowCredentials()
             .WithOrigins(
+                "http://localhost:4200",
+                "http://127.0.0.1:4200",
                 "http://localhost:4050",
                 "http://127.0.0.1:4050"
             );
@@ -84,23 +86,25 @@ builder.Services.AddSingleton<IDriver>(dr =>
     return GraphDatabase.Driver(uri, AuthTokens.Basic(user, password));
 });
 
-builder.Services.AddSingleton<IDatabase>(dr =>
+builder.Services.AddSingleton<IConnectionMultiplexer>(_ =>
 {
     var uri = Environment.GetEnvironmentVariable("REDIS_URI");
-    var port= int.Parse(Environment.GetEnvironmentVariable("REDIS_PORT"));
-    var username= Environment.GetEnvironmentVariable("REDIS_USERNAME");
-    var password=Environment.GetEnvironmentVariable("REDIS_PASSWORD");
-    var connection = ConnectionMultiplexer.Connect(new ConfigurationOptions
+    var port = int.Parse(Environment.GetEnvironmentVariable("REDIS_PORT")!);
+    var username = Environment.GetEnvironmentVariable("REDIS_USERNAME");
+    var password = Environment.GetEnvironmentVariable("REDIS_PASSWORD");
+
+    return ConnectionMultiplexer.Connect(new ConfigurationOptions
     {
-        EndPoints =
-        {
-            { uri, port }
-        },
+        EndPoints = { { uri, port } },
         User = username,
         Password = password
     });
-    IDatabase _redisDb = connection.GetDatabase();
-    return _redisDb;
+});
+
+builder.Services.AddSingleton<IDatabase>(sp =>
+{
+    var mux = sp.GetRequiredService<IConnectionMultiplexer>();
+    return mux.GetDatabase();
 });
 
 builder.Services.AddScoped<ICacheService, RedisCacheService>();
@@ -117,11 +121,7 @@ builder.Services.AddControllersWithViews();
 
 
 var app = builder.Build();
-app.UseCors("AllowAngular");
 
-
-
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -130,14 +130,14 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapControllers();
-
-
-
-app.UseAuthorization();
+app.UseRouting();                 // <- BITNO
+app.UseCors("AllowAngular");      // <- BITNO (pre auth i pre MapControllers)
 
 app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseStaticFiles();
+
+app.MapControllers();             // <- MapControllers IDE NA KRAJU (posle CORS/auth)
 
 app.Run();
