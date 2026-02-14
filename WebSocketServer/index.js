@@ -27,6 +27,17 @@ io.on('connection',(socket)=>{
         socket.join(room);
         console.log(`Client joined room: ${room}`);
       });
+
+    socket.on("joinNotificationRoom",(room)=>{
+      socket.join(room);
+      console.log(`Client joined room: ${room}`);
+    });
+
+    socket.on("leaveNotificationRoom",(room)=>{
+      socket.leave(room);
+      console.log(`Leaving room ${room}`);
+    })
+
     socket.on('leaveRoom',(room)=>{
         socket.leave(room);
         console.log('Client left room '+room);

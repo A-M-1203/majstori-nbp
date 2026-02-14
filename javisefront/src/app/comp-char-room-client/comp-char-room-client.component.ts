@@ -20,10 +20,10 @@ export class CompCharRoomClientComponent implements OnInit,OnDestroy {
 
   sendMessage() {
     let message:any={sadrzaj:this.messageContent,chat:this.room,korisnik:this.id};
-    this.servisSocket.sendMessage(message);
+    this.messageServis.sendMessage(message);
     this.messageContent = '';
   }
-  
+
 @ViewChild('messagesContainer') private messagesContainer!: ElementRef;
   constructor(private servisSocket:SocketService,private route:ActivatedRoute,private messageServis:ServiceMessage){
     this.observable=this.messageServis.returnObs();

@@ -24,7 +24,7 @@ id:string='';
 @ViewChild('messagesContainer') private messagesContainer!: ElementRef;
     sendMessage() {
         let message:any={sadrzaj:this.messageContent,chat:this.room,korisnik:this.id};
-        this.serviceSocket.sendMessage(message);
+        this.servisMessage.sendMessage(message);
         this.messageContent = '';
     }
 messageContent: any;
