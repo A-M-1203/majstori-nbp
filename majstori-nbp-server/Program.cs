@@ -121,7 +121,11 @@ builder.Services.AddControllersWithViews();
 
 
 var app = builder.Build();
+app.UseCors("AllowAngular");
 
+
+
+// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -129,15 +133,12 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-app.UseRouting();                 // <- BITNO
-app.UseCors("AllowAngular");      // <- BITNO (pre auth i pre MapControllers)
+app.UseStaticFiles();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapControllers();
+
 app.UseStaticFiles();
-
-app.MapControllers();             // <- MapControllers IDE NA KRAJU (posle CORS/auth)
-
 app.Run();

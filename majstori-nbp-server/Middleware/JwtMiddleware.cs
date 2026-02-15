@@ -1,44 +1,61 @@
-using System.Security.Claims;
-using majstori_nbp_server.Helper;
+using System.Text.Json;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.IdentityModel.Tokens;
+using majstori_nbp_server.Services;
 
 namespace majstori_nbp_server.Middleware;
 
-public class JwtAuthorizeFilter : IAuthorizationFilter
+public class JwtAuthorizeFilter : IAsyncAuthorizationFilter
 {
-    private readonly JwtSecurityTokenHandlerWrapper _wrapper;
+    private readonly ICacheService _cache;
 
-    public JwtAuthorizeFilter(JwtSecurityTokenHandlerWrapper wrapper)
+    public JwtAuthorizeFilter(ICacheService cache)
     {
-        _wrapper = wrapper;
+        _cache = cache;
     }
-    
 
-    public void OnAuthorization(AuthorizationFilterContext context)
+    private record SessionData(string userId, string role);
+
+    public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
     {
-        var token = context.HttpContext.Request.Headers["Authorization"].ToString();
-        token= token.Replace("Bearer ", "");
-        if (!token.IsNullOrEmpty())
+        var auth = context.HttpContext.Request.Headers["Authorization"].ToString();
+
+        if (string.IsNullOrWhiteSpace(auth) || !auth.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
         {
-            try
-            {
-                //umesto jwt treba da uzima userID i role iz redisa na osnovu tokena
-                var claims = _wrapper.ValidateJwtToken(token);
-                var userId = claims.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                var role = claims.FindFirst(ClaimTypes.Role)?.Value;
-                context.HttpContext.Items["userId"] = userId;
-                context.HttpContext.Items["role"] = role;
-                context.HttpContext.Response.StatusCode = 200;
-            }
-            catch (Exception ex)
-            {
-                context.HttpContext.Response.StatusCode = 403;
-            }
+            context.Result = new UnauthorizedResult();
+            return;
         }
-        else
+
+        var token = auth.Substring("Bearer ".Length).Trim();
+
+        var json = await _cache.GetStringAsync($"session:{token}");
+        if (string.IsNullOrEmpty(json))
         {
-            context.HttpContext.Response.StatusCode = 403;
+            context.Result = new UnauthorizedResult();
+            return;
         }
+
+        SessionData? session;
+        try
+        {
+            session = JsonSerializer.Deserialize<SessionData>(json);
+        }
+        catch
+        {
+            context.Result = new UnauthorizedResult();
+            return;
+        }
+
+        if (session?.userId is null || session.role is null)
+        {
+            context.Result = new UnauthorizedResult();
+            return;
+        }
+
+        context.HttpContext.Items["userId"] = session.userId;
+        context.HttpContext.Items["role"] = session.role;
+
+        // opciono: “sliding expiration”
+        await _cache.SetKeyExpiryTimeAsync($"session:{token}", TimeSpan.FromMinutes(30));
     }
 }

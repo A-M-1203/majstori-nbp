@@ -3,6 +3,9 @@ using majstori_nbp_server.Helper;
 using majstori_nbp_server.Mappings;
 using majstori_nbp_server.Services;
 using Neo4j.Driver;
+using System.Security.Cryptography;
+using System.Text.Json;
+
 
 namespace majstori_nbp_server.Implementations;
 
@@ -12,6 +15,9 @@ public class KlijentService : IKlijentService
     private readonly IEmailService _emailService;
     private readonly IDriver _driver;
     private readonly JwtSecurityTokenHandlerWrapper _wrapper;
+
+
+
 
     public KlijentService(ICacheService cacheService, IEmailService emailService, IDriver driver, JwtSecurityTokenHandlerWrapper wrapper)
     {
@@ -240,6 +246,22 @@ public class KlijentService : IKlijentService
         throw new NotImplementedException();
     }
 
+
+//HELPER METODE(redis)
+    // private static string GenerateToken(int bytes = 32)
+    // {
+    //     // 32 bytes = 256-bit random, dovoljno jako
+    //     var buffer = new byte[bytes];
+    //     RandomNumberGenerator.Fill(buffer);
+    //     return Convert.ToBase64String(buffer)
+    //         .Replace("+", "-")
+    //         .Replace("/", "_")
+    //         .TrimEnd('=');
+    // }
+
+    private static string SessionKey(string token) => $"session:{token}";
+
+
     public async Task<string> SignIn(string email, string password)
     {
         IAsyncSession? session = null;
@@ -256,11 +278,21 @@ public class KlijentService : IKlijentService
             {
                 var node = record[0]["u"].As<INode>();
                 bool verify = BCrypt.Net.BCrypt.Verify(password, node.Properties["password"]?.As<string>() ?? "");
-                if (verify)
-                {
-                    //Umesto generateJwt treba da se vrati random string i stavi ga u redis da se cuva
-                    return _wrapper.GenerateJwtToken(node.Properties["_id"]?.As<string>() ?? "", "korisnik");
-                }
+
+            //IZMENA IF-a    
+            if (verify)
+            {
+                var userId = node.Properties["_id"]?.As<string>() ?? "";
+                var token = TokenGen.NewToken(); // <-- OVDE(ZA RANDOM STRINg to jest token)
+
+                var sessionObj = new { userId = userId, role = "korisnik" };
+                var sessionJson = JsonSerializer.Serialize(sessionObj);
+
+                // čuvamo 30 minuta (posle automatski nestaje)
+                await _cacheService.SetStringAsync(SessionKey(token), sessionJson, TimeSpan.FromMinutes(30));
+
+                return token;
+            }
 
                 return "";
             }

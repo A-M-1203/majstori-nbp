@@ -20,7 +20,14 @@ public class KategorijaService:IKategorijaService
         try
         {
             session = _driver.AsyncSession(o => o.WithDefaultAccessMode(AccessMode.Read));
-            var kategorije = await session.RunAsync("MATCH (k:Kategorija) MATCH (p:Podkategorija)-[:BELONGS]->(k) RETURN k,collect(p) as podkategorija ");
+
+            //izmena [x IN podkategorija WHERE x IS NOT NULL] je da ne dobiješ [null] kad neka kategorija nema podkategorije.
+            var kategorije = await session.RunAsync(@"
+                MATCH (k:Kategorija)
+                OPTIONAL MATCH (k)-[:PODKATEGORIJA|IMA]->(p:Podkategorija)
+                WITH k, collect(DISTINCT p) AS podkategorija
+                RETURN k, [x IN podkategorija WHERE x IS NOT NULL] AS podkategorija
+            ");
             var records = await kategorije.ToListAsync();
             foreach (var record in records)
             {
@@ -55,9 +62,7 @@ public class KategorijaService:IKategorijaService
         finally
         {
             if (session != null)
-            {
-                session.CloseAsync();
-            }
+                await session.CloseAsync();
         }
 
         kategorijeRes.kategorije = kategorija;
