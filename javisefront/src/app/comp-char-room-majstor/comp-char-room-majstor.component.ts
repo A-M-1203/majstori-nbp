@@ -52,10 +52,7 @@ messageContent: any;
         console.log(x.chats);
         this.chats=x.chats;
       })
-      const token=localStorage.getItem("jwtToken");
-      if(token){
-        this.id=jwtDecode<any>(token).userId;
-      }
+
     }
     ngAfterViewChecked() {
       this.scrollToBottom();

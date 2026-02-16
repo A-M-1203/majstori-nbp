@@ -96,8 +96,7 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(_ =>
     return ConnectionMultiplexer.Connect(new ConfigurationOptions
     {
         EndPoints = { { uri, port } },
-        User = username,
-        Password = password
+        AbortOnConnectFail = false
     });
 });
 

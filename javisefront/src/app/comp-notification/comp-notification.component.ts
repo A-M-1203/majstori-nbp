@@ -2,6 +2,7 @@ import { Component, ElementRef, HostListener } from '@angular/core';
 import { NotificationItem } from '../interface/notification';
 import { NotificationService } from '../service/notification.service';
 import { Observable } from 'rxjs';
+import { SocketService } from '../service/ser-socket';
 
 @Component({
   selector: 'app-comp-notification',
@@ -11,10 +12,19 @@ import { Observable } from 'rxjs';
 export class CompNotificationComponent {
   open = false;
   items$: Observable<NotificationItem[]> = this.ns.items$;
+  private notification:any[]=[];
 
-  constructor(public ns: NotificationService, private el: ElementRef<HTMLElement>) {
+  constructor(public ns: NotificationService, private el: ElementRef<HTMLElement>,private socket:SocketService) {
     // optional demo seed
-    this.ns.seedDemo();
+    //this.ns.seedDemo();
+    const token:string | null=localStorage.getItem("jwtToken");
+    if(token){
+      socket.joinNotificationRoom(token);
+      socket.onNotification((n)=>{
+        this.notification.push(n);
+      })
+    }
+    ns.get();
   }
 
   toggle() {
@@ -26,9 +36,6 @@ export class CompNotificationComponent {
   }
 
   onItemClick(n: NotificationItem) {
-    this.ns.markRead(n.id);
-    // If you use Angular Router, you can route to n.link here
-    // Example: if (n.link) this.router.navigateByUrl(n.link);
     this.close();
   }
 

@@ -4,16 +4,13 @@
     <!-- simple bell icon -->
     <span class="bell-icon">🔔</span>
 
-    <span class="badge" *ngIf="ns.unreadCount > 0">
-      {{ ns.unreadCount > 99 ? '99+' : ns.unreadCount }}
-    </span>
+
   </button>
 
   <!-- Dropdown -->
   <div class="dropdown" *ngIf="open" role="dialog" aria-label="Notifications">
     <div class="head">
       <div class="title">Notifications</div>
-      <button class="link-btn" type="button" (click)="ns.markAllRead()">Mark all as read</button>
     </div>
 
     <div class="list" *ngIf="(items$ | async) as items">
@@ -26,7 +23,6 @@
         type="button"
         *ngFor="let n of items"
         (click)="onItemClick(n)"
-        [class.unread]="!n.isRead"
       >
         <div class="avatar">
           <img *ngIf="n.avatarUrl; else fallback" [src]="n.avatarUrl" alt="" />
@@ -39,7 +35,6 @@
           <div class="msg">{{ n.text }}</div>
           <div class="meta">
             <span class="time">{{ timeAgo(n.time) }}</span>
-            <span class="dot" *ngIf="!n.isRead"></span>
           </div>
         </div>
       </button>

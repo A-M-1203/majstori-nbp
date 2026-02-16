@@ -4,6 +4,7 @@ const http=require('http');
 const bodyParser=require('body-parser');
 const cors=require('cors');
 const socketIo = require('socket.io');
+const redis = require('redis');
 
 //App settings
 const app=express();
@@ -21,6 +22,10 @@ const io = socketIo(server, {
       methods: ["GET", "POST"]
     }
   });
+const client = redis.createClient({
+  url: 'redis://redis:6379' 
+});
+client.connect();
 io.on('connection',(socket)=>{
     console.log("New client je povezan");
     socket.on('joinRoom', (room) => {
@@ -28,14 +33,20 @@ io.on('connection',(socket)=>{
         console.log(`Client joined room: ${room}`);
       });
 
-    socket.on("joinNotificationRoom",(room)=>{
-      socket.join(room);
-      console.log(`Client joined room: ${room}`);
+    socket.on("joinNotificationRoom",async (room)=>{
+      
+      const value = await client.get("session:"+room);
+      const jsonObject=JSON.parse(value);
+      console.log(jsonObject);
+      console.log(`Client joined room: ${jsonObject.userId}`);
+      socket.join(jsonObject.userId);
     });
 
-    socket.on("leaveNotificationRoom",(room)=>{
-      socket.leave(room);
-      console.log(`Leaving room ${room}`);
+    socket.on("leaveNotificationRoom",async (room)=>{
+      const value = await client.get("session:"+room);
+      const jsonObject=JSON.parse(value);
+      console.log(`Client joined room: ${jsonObject.userId}`);
+      socket.leave(jsonObject.userId);
     })
 
     socket.on('leaveRoom',(room)=>{

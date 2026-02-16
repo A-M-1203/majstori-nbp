@@ -20,13 +20,9 @@ public class JwtAuthorizeFilter : IAsyncAuthorizationFilter
     {
         var auth = context.HttpContext.Request.Headers["Authorization"].ToString();
 
-        if (string.IsNullOrWhiteSpace(auth) || !auth.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
-        {
-            context.Result = new UnauthorizedResult();
-            return;
-        }
+        
 
-        var token = auth.Substring("Bearer ".Length).Trim();
+        var token = auth.Trim();
 
         var json = await _cache.GetStringAsync($"session:{token}");
         if (string.IsNullOrEmpty(json))

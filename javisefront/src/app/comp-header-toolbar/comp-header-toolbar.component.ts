@@ -12,23 +12,13 @@ import { SocketService } from '../service/ser-socket';
 export class CompHeaderToolbarComponent {
 
 
-  private notification:any[]=[];
+
 
   constructor (private servis: ServiceLogovanje,private socket:SocketService) {
-    const token:string | null=localStorage.getItem("jwtToken");
-    if(token){
-      socket.joinRoom(token);
-      socket.onNotification((n)=>{
-        this.notification.push(n);
-      })
-    }
+
   }
 
   logOut() {
-    const token:string | null=localStorage.getItem("jwtToken");
-    if(token){
-      this.socket.leaveNotificationRoom(token);
-    }
     this.servis.logout();
   }
 }

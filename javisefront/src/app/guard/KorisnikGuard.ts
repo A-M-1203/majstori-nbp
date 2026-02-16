@@ -19,9 +19,9 @@ export class KorisnikGuard implements CanActivate {
       this.router.navigate(['/']);
     }
     else{
-        const type:any=jwtDecode(hasToken);
+        const type:any=localStorage.getItem('type');
         console.log(type);
-        if(type.role!=="korisnik"){
+        if(type!=="korisnik"){
           alert("Niste ulogovani kao korisnik");
           this.authService.logout();
           this.router.navigate(['/']);

@@ -26,6 +26,7 @@ export class ServiceLogovanje {
           if (this.isBrowser()) {
             sessionStorage.setItem('jwtToken', response.token);
             localStorage.setItem('jwtToken', response.token);
+            localStorage.setItem('type',response.type);
           }
           return { token: response.token, type: response.type };
         })

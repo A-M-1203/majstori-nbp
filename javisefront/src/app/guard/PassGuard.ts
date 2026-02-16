@@ -18,8 +18,8 @@ export class PassGuard implements CanActivate {
         return true;
       }
       else{
-      const type:any=jwtDecode(hasToken);
-      if(type.role=="majstor"){
+      const type:any=localStorage.getItem('type');
+      if(type=="majstor"){
         this.router.navigate(['/glavnaStranicaMajstor']);
       }
       else{
