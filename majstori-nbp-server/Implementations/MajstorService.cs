@@ -6,6 +6,8 @@ using majstori_nbp_server.Services;
 using Microsoft.AspNetCore.Mvc;
 using Neo4j.Driver;
 using Neo4j.Driver.Mapping;
+using System.Text.Json;
+
 
 namespace majstori_nbp_server.Implementations;
 
@@ -16,6 +18,8 @@ public class MajstorService : IMajstorService
     private readonly IDriver _driver;
     private readonly JwtSecurityTokenHandlerWrapper _wrapper;
     private readonly IKategorijaService _kategorijaService;
+    private static string SessionKey(string token) => $"session:{token}";
+
     public MajstorService(ICacheService cacheService, IEmailService emailService,IKategorijaService kategorijaService, IDriver driver,JwtSecurityTokenHandlerWrapper wrapper)
     {
         _cacheService = cacheService;
@@ -293,32 +297,33 @@ public class MajstorService : IMajstorService
         try
         {
             session = _driver.AsyncSession(o => o.WithDefaultAccessMode(AccessMode.Read));
-            var result = await session.RunAsync(@"MATCH (u:majstor{email:$email}) RETURN u", new
-            {
-                email = email,
-                password = password
-            });
+            var result = await session.RunAsync(@"MATCH (u:majstor{email:$email}) RETURN u", new { email });
             var record = await result.ToListAsync();
-            if (record is not null && record.Count==1)
-            {
-                var node = record[0]["u"].As<INode>();
-                bool verify = BCrypt.Net.BCrypt.Verify(password, node.Properties["password"]?.As<string>() ?? "");
-                if (verify)
-                {
-                    return _wrapper.GenerateJwtToken(node.Properties["_id"]?.As<string>() ?? "", "majstor");
-                }
 
-                return "";
-            }
+            if (record is null || record.Count != 1) return "";
 
-            session?.Dispose();
-            return "";
+            var node = record[0]["u"].As<INode>();
+            bool verify = BCrypt.Net.BCrypt.Verify(password, node.Properties["password"]?.As<string>() ?? "");
+            if (!verify) return "";
 
+            var userId = node.Properties["_id"]?.As<string>() ?? "";
+            var token = TokenGen.NewToken();
+
+            var sessionObj = new { userId = userId, role = "majstor" };
+            var sessionJson = JsonSerializer.Serialize(sessionObj);
+
+            await _cacheService.SetStringAsync(SessionKey(token), sessionJson, TimeSpan.FromMinutes(30));
+
+            return token;
         }
         catch (Exception e)
         {
             Console.WriteLine(e.Message);
             return "";
+        }
+        finally
+        {
+            session?.Dispose();
         }
     }
 

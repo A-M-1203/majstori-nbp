@@ -5,4 +5,5 @@ public class PodkategorijaDTO
     public string _id { get; set; }
     public string naziv { get; set; }
     public string kategorija { get; set; }
+    
 }

@@ -11,7 +11,11 @@ public interface ICacheService
     Task<bool> UpdateDataAsync(string key, string newValue);
     Task<bool> UpdateDataWithExpiryAsync(string key, string newValue, TimeSpan expiry);
     Task<bool> DeleteDataAsync(string key);
-
+    
+    //dodato
+    Task<bool> SetStringAsync(string key, string value, TimeSpan? expiry = null);
+    Task<string?> GetStringAsync(string key);
+    
     IEnumerable<string> GetAllSetData(string key);
     Task<bool> SetDataExistsAsync(string key, string value);
     Task<bool> CreateSetDataAsync(string key, string value);
@@ -22,6 +26,10 @@ public interface ICacheService
     Task<double> CreateOrIncrementSortedSetDataAsync(string key, string value, int score);
     Task<bool> UpdateSortedSetDataAsync(string key, string oldValue, string newValue);
     Task<bool> DeleteSortedSetDataAsync(string key, string value);
+
+    Task<long> ListRightPushAsync(string key, string value);
+    Task<string[]> ListRangeAsync(string key, long start = 0, long stop = -1);
+    Task ListTrimAsync(string key, long start, long stop);
 
     IAsyncEnumerable<(string Key, List<HashEntry> Entries)> GetAllHashDataAsync(string keyPattern);
     Task<List<HashEntry>?> GetHashDataAsync(string key);

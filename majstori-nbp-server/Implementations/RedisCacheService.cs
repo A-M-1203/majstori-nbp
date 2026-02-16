@@ -1,44 +1,69 @@
 using majstori_nbp_server.Services;
 using Neo4j.Driver;
 using StackExchange.Redis;
-
+using System.Linq;
 namespace majstori_nbp_server.Implementations;
 
 public class RedisCacheService : ICacheService
 {
-    private IDatabase _redisDb;
-    private IServer serverConfig;
-    private IDriver driver;
 
-    public RedisCacheService(IDriver driver)
+    private readonly IDatabase _redisDb;
+    private readonly IConnectionMultiplexer _redis;
+    private readonly IServer _server;
+
+//novi konstruktor
+    public RedisCacheService(IDatabase redisDb, IConnectionMultiplexer redis)
     {
-        this.driver = driver;
-        /*var connection = ConnectionMultiplexer.Connect(new ConfigurationOptions
-        {
-            EndPoints =
-            {
-                { "redis-16631.c300.eu-central-1-1.ec2.redns.redis-cloud.com", 16631 }
-            },
-            User = "default",
-            Password = "zFPbn1BTJ9xRlpjlnrenDF3Cutn2lyC9"
-        });
-        _redisDb = connection.GetDatabase();
-        serverConfig = connection.GetServer("redis-16631.c300.eu-central-1-1.ec2.redns.redis-cloud.com", 16631);
-        */
+        _redisDb = redisDb;
+        _redis = redis;
+
+        var endpoint = _redis.GetEndPoints().First();
+        _server = _redis.GetServer(endpoint);
     }
+    
+    //dodato
+    public async Task<long> ListRightPushAsync(string key, string value)
+    => await _redisDb.ListRightPushAsync(key, value);
+
+    public async Task<string[]> ListRangeAsync(string key, long start = 0, long stop = -1)
+    {
+        var vals = await _redisDb.ListRangeAsync(key, start, stop);
+        return vals.Select(v => v.ToString()).ToArray();
+    }
+
+    public Task ListTrimAsync(string key, long start, long stop)
+        => _redisDb.ListTrimAsync(key, start, stop);
+
+
+    public async Task<bool> SetStringAsync(string key, string value, TimeSpan? expiry = null)
+    {
+        return await _redisDb.StringSetAsync(key, value, expiry);
+    }
+
+    public async Task<string?> GetStringAsync(string key)
+    {
+        var v = await _redisDb.StringGetAsync(key);
+        return v.HasValue ? v.ToString() : null;
+    }
+
+  
 
     public async IAsyncEnumerable<string> GetAllDataAsync(string keyPattern)
     {
-        await foreach (var key in serverConfig.KeysAsync(pattern: keyPattern))
+        await foreach (var key in _server.KeysAsync(pattern: keyPattern))
         {
             yield return key.ToString();
         }
     }
-
     public async Task<string?> GetDataAsync(string key)
     {
-        return (await _redisDb.StringGetAsync(key)).ToString();
+        var v = await _redisDb.StringGetAsync(key);
+        return v.HasValue ? v.ToString() : null;
     }
+    // public async Task<string?> GetDataAsync(string key)
+    // {
+    //     return (await _redisDb.StringGetAsync(key)).ToString();
+    // }
 
     public async Task<bool> CreateDataAsync(string key, string value)
     {
@@ -169,7 +194,7 @@ public class RedisCacheService : ICacheService
 
     public async IAsyncEnumerable<(string Key, List<HashEntry> Entries)> GetAllHashDataAsync(string keyPattern)
     {
-        await foreach (var key in serverConfig.KeysAsync(pattern: keyPattern))
+        await foreach (var key in _server.KeysAsync(pattern: keyPattern))
         {
             var entries = await _redisDb.HashGetAllAsync(key);
             yield return (key!, entries.ToList());

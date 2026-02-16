@@ -31,11 +31,11 @@ public class korisnikController:ControllerBase
           bool result = await _klijentService.CreateAsync(createKlijentDTO);
           if (result)
           {
-              return Ok("user created");
+              return Ok(new { message = "user created" });
           }
           else
           {
-              return BadRequest("User not created");
+              return BadRequest(new { message = "User not created" });
           }
       }
 
