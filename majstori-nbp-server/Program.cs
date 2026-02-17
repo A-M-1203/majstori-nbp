@@ -55,6 +55,31 @@ builder.Services.AddSwaggerGen(options =>
         Type = "string",
         Example = new Microsoft.OpenApi.Any.OpenApiString("15.10.2025 21:37:45")
     });
+    //Bearer auth u Swagger
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "Bearer",
+        In = ParameterLocation.Header,
+        Description = "Unesi: Bearer {token}"
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
 });
 
 var  MyAllowSpecificOrigins = "_myAllowSpecificOrigins";

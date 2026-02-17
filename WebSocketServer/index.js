@@ -9,7 +9,7 @@ const redis = require('redis');
 //App settings
 const app=express();
 const corsOptions = {
-    origin: 'http://localhost:4050',
+    origin: ['http://localhost:4050', 'http://localhost:4200'],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     allowedHeaders: 'Content-Type,Authorization'
   };
@@ -18,7 +18,7 @@ app.use(bodyParser.json());
 const server=http.createServer(app);
 const io = socketIo(server, {
     cors: {
-      origin: "http://localhost:4050", 
+      origin: ['http://localhost:4050', 'http://localhost:4200'], 
       methods: ["GET", "POST"]
     }
   });

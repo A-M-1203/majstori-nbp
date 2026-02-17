@@ -14,18 +14,38 @@ public class JwtAuthorizeFilter : IAsyncAuthorizationFilter
         _cache = cache;
     }
 
+    // Očekuje JSON u Redis-u: {"userId":"...","role":"..."}
     private record SessionData(string userId, string role);
 
     public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
     {
         var auth = context.HttpContext.Request.Headers["Authorization"].ToString();
 
-        
+        if (string.IsNullOrWhiteSpace(auth))
+        {
+            context.Result = new UnauthorizedResult();
+            return;
+        }
 
-        var token = auth.Trim();
+        // Podržava:
+        // 1) "Bearer <token>"
+        // 2) "<token>" (fallback)
+        string token;
+        if (auth.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+            token = auth.Substring("Bearer ".Length).Trim();
+        else
+            token = auth.Trim();
 
-        var json = await _cache.GetStringAsync($"session:{token}");
-        if (string.IsNullOrEmpty(json))
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            context.Result = new UnauthorizedResult();
+            return;
+        }
+
+        var key = $"session:{token}";
+
+        var json = await _cache.GetStringAsync(key);
+        if (string.IsNullOrWhiteSpace(json))
         {
             context.Result = new UnauthorizedResult();
             return;
@@ -42,7 +62,9 @@ public class JwtAuthorizeFilter : IAsyncAuthorizationFilter
             return;
         }
 
-        if (session?.userId is null || session.role is null)
+        if (session is null ||
+            string.IsNullOrWhiteSpace(session.userId) ||
+            string.IsNullOrWhiteSpace(session.role))
         {
             context.Result = new UnauthorizedResult();
             return;
@@ -52,6 +74,6 @@ public class JwtAuthorizeFilter : IAsyncAuthorizationFilter
         context.HttpContext.Items["role"] = session.role;
 
         // opciono: “sliding expiration”
-        await _cache.SetKeyExpiryTimeAsync($"session:{token}", TimeSpan.FromMinutes(30));
+        await _cache.SetKeyExpiryTimeAsync(key, TimeSpan.FromMinutes(30));
     }
 }
