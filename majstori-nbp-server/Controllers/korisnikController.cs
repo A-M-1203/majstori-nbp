@@ -39,6 +39,12 @@ public class korisnikController:ControllerBase
           }
       }
 
+      [HttpGet("getId")]
+      [ServiceFilter(typeof(JwtAuthorizeFilter))]
+      public async Task<IActionResult> Get()
+      {
+          return Ok(new { id = HttpContext.Items["userId"] });
+      }
       [Microsoft.AspNetCore.Mvc.HttpPost("signin")]
       public async Task<IActionResult> signin([FromBody] LoginDTO loginDTO)
       {

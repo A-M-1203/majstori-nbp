@@ -27,6 +27,14 @@ public class majstorController : ControllerBase
         return Ok(_majstorService.GetAllEmails());
     }
 
+    
+    [HttpGet("getId")]
+    [ServiceFilter(typeof(JwtAuthorizeFilter))]
+    public async Task<IActionResult> Get()
+    {
+        return Ok(new { id = HttpContext.Items["userId"] });
+    }
+    
     [HttpPost("signin")]
     public async Task<IActionResult> signin([FromBody]LoginDTO loginDTO)
     {

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace majstori_nbp_server.Controllers;
 
+
 [ApiController]
 [Route("[controller]")]
 public class messageController : ControllerBase
@@ -23,7 +24,7 @@ public class messageController : ControllerBase
     {
         _cache = cache;
     }
-
+    
     private static string MessagesKey(string chatId) => $"chat:{chatId}:messages";
 
     // GET /message/{id}  (id = chatId)
@@ -73,6 +74,9 @@ public class messageController : ControllerBase
         await _cache.ListRightPushAsync(key, json);
         await _cache.ListTrimAsync(key, -MaxMessages, -1);
 
+        await _cache.PublishAsync("chat", json);
+
         return Ok(message);
     }
 }
+

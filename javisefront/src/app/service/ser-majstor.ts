@@ -25,7 +25,9 @@ export class ServiceMajstor {
             console.log(x.message);
         });
     }
-
+    getId(){
+      return this.http.get<{id:string}>(url+"/majstor/getId");
+    }
     getProfile(): Observable<{ime:string, prezime:string, email:string, broj:string, lokacija:string, adresa:string, podkategorija:{naziv:String,_id:String,kategorija:String}[], profilePicture:string}> {
         return this.http.get<{ ime:string, prezime:string, email:string, broj:string, lokacija:string, adresa:string, podkategorija:{naziv:String,_id:String,kategorija:String}[], profilePicture:string}>(url+"/majstor/profile")
             .pipe(

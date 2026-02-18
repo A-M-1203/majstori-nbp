@@ -5,6 +5,7 @@ import { jwtDecode } from 'jwt-decode';
 import { Message } from '../interface/message';
 import { Observable } from 'rxjs';
 import { ServiceMessage } from '../service/ser-message';
+import { ServiceKlijent } from '../service/ser-klijent';
 @Component({
   selector: 'app-comp-char-room-client',
   templateUrl: './comp-char-room-client.component.html',
@@ -16,7 +17,7 @@ export class CompCharRoomClientComponent implements OnInit,OnDestroy {
   id:string='';
   messages:Message[]=[];
   messageContent: string='';
-  observable:Observable<Message[]>
+
 
   sendMessage() {
     let message:any={sadrzaj:this.messageContent,chat:this.room,korisnik:this.id};
@@ -25,10 +26,10 @@ export class CompCharRoomClientComponent implements OnInit,OnDestroy {
   }
 
 @ViewChild('messagesContainer') private messagesContainer!: ElementRef;
-  constructor(private servisSocket:SocketService,private route:ActivatedRoute,private messageServis:ServiceMessage){
-    this.observable=this.messageServis.returnObs();
-    this.observable.subscribe((x)=>{
-      this.messages=x;
+  constructor(private servisSocket:SocketService,private route:ActivatedRoute,private messageServis:ServiceMessage,private korisnikService:ServiceKlijent){
+    korisnikService.getId().subscribe(x=>{
+      this.id=x.id;
+      console.log(this.id);
     })
   }
   ngOnDestroy(): void {
@@ -37,17 +38,20 @@ export class CompCharRoomClientComponent implements OnInit,OnDestroy {
   ngOnInit(): void {
     this.route.paramMap.subscribe(map=>{
       this.room=map.get('id');
+      console.log(this.room);
       if(this.room){
         const token:any=localStorage.getItem("jwtToken");
         if(token){
-          this.id=jwtDecode<any>(token).userId;
+          //this.id=jwtDecode<any>(token).userId;
         }
+        console.log(this.room);
+        this.messageServis.getMessages(this.room).subscribe(x=>{
+          this.messages=x;
+        })
         this.servisSocket.joinRoom(this.room);
         this.servisSocket.onNewMessage((message)=>{
           this.messages.push(message);
         })
-        this.messageServis.getMessages(this.room);
-        console.log(this.id,this.room);
       }
     })
   }

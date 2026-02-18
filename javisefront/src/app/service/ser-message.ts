@@ -12,9 +12,7 @@ export class ServiceMessage{
         return this.subject.asObservable();
     }
     getMessages(id:String){
-        this.http.get<{messages:Message[]}>(url+"/message/"+id).subscribe(x=>{
-            this.subject.next(x.messages);
-        });
+        return this.http.get<Message[]>(url+"/message/"+id);
     }
     sendMessage(message:Message){
       this.http.post<boolean>(url+"/message",message).subscribe(x=>{

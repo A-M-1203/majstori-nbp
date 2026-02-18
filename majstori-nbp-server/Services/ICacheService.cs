@@ -38,4 +38,6 @@ public interface ICacheService
     Task<bool> DeleteHashDataAsync(string key);
 
     Task<bool> SetKeyExpiryTimeAsync(string key, TimeSpan expiryTime);
+    
+    Task PublishAsync(string key, string value);
 }

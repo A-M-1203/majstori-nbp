@@ -6,6 +6,9 @@ const cors=require('cors');
 const socketIo = require('socket.io');
 const redis = require('redis');
 
+
+
+
 //App settings
 const app=express();
 const corsOptions = {
@@ -22,10 +25,21 @@ const io = socketIo(server, {
       methods: ["GET", "POST"]
     }
   });
-const client = redis.createClient({
-  url: 'redis://redis:6379' 
-});
-client.connect();
+
+  const client = redis.createClient({
+    url: 'redis://redis:6379' 
+  });
+  client.connect();
+  (async ()=>{
+    const subClient=client.duplicate();
+    await subClient.connect();
+    await subClient.subscribe("chat",(message)=>{
+        console.log(message);
+        messageJson=JSON.parse(message);
+        io.to(messageJson.chat).emit("newMessage",messageJson);
+      });
+  })();
+
 io.on('connection',(socket)=>{
     console.log("New client je povezan");
     socket.on('joinRoom', (room) => {

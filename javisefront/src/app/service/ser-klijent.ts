@@ -22,6 +22,9 @@ export class ServiceKlijent {
         });
     }
 
+    getId(){
+      return this.http.get<{id:string}>(url+"/korisnik/getId");
+    }
     getProfile(): Observable<{ime: string, prezime: string, profilePicture: string,adresa:string, lokacija:string,broj:string}> {
         return this.http.get<{ ime: string, prezime: string, profilePicture: string,adresa:string, lokacija:string,broj:string}>(url+"/korisnik/profile")
             .pipe(

@@ -290,4 +290,9 @@ public class RedisCacheService : ICacheService
 
         return isSet;
     }
+
+    public async Task PublishAsync(string key, string value)
+    {
+        await _redisDb.PublishAsync(key, value);
+    }
 }
