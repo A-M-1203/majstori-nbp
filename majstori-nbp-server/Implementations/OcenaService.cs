@@ -4,16 +4,20 @@ using majstori_nbp_server.DTOs.MajstorDTOs;
 using majstori_nbp_server.DTOs.Ocena;
 using majstori_nbp_server.Services;
 using Neo4j.Driver;
+using System.Text.Json;
+using majstori_nbp_server.DTOs.NottificationDTOs;
 
 namespace majstori_nbp_server.Implementations;
 
 public class OcenaService: IOcenaService
 {
     public IDriver _driver { get; set; }
+    private readonly ICacheService _cache;
 
-    public OcenaService(IDriver driver)
+    public OcenaService(IDriver driver, ICacheService cache)
     {
         _driver = driver;
+        _cache = cache;
     }
 
     public async Task<bool> addOcena(string userId,string majstorId)
@@ -22,13 +26,41 @@ public class OcenaService: IOcenaService
         try
         {
             session = _driver.AsyncSession(o => o.WithDefaultAccessMode(AccessMode.Write));
-            var result=await session.RunAsync(@"MATCH (m:majstor{_id:$majstorId}) MATCH(k:korisnik{_id:$userId}) MERGE(k)-[r:OCENA]->(m) ON CREATE SET r.alreadyExisted=false ON MATCH set r.alreadyExisted=true RETURN r.alreadyExisted as existed",new
+            var result=await session.RunAsync(@"MATCH (m:majstor{_id:$majstorId}) MATCH(k:korisnik{_id:$userId}) MERGE(k)-[r:OCENA]->(m) ON CREATE SET r.alreadyExisted=false ON MATCH set r.alreadyExisted=true RETURN k,r.alreadyExisted as existed",new
             {
                 majstorId = majstorId,
                 userId = userId
             });
+            //Izvuci iz ove promenljive record ime i prezime korisnika i njegovu profilnu sliku i dodaj ih notifikaciju, izmeni ove variable
             var record = await result.SingleAsync();
+            var korisnikNode = record["k"].As<INode>();
+            string fullname = $"{korisnikNode.Properties["ime"]} {korisnikNode.Properties["prezime"]}";
+            string profilePicture = korisnikNode.Properties.ContainsKey("profilePicture")
+            ? korisnikNode.Properties["profilePicture"]?.ToString() ?? ""
+            : "";
             var existed=record["existed"].As<bool>();
+            if (existed == false)
+            {
+                var notifKey = $"notifications:{majstorId}";
+                
+
+                var notif = new NottificationDTO
+                {
+                    id = Guid.NewGuid().ToString(),
+                    text =  $"{fullname} vas je dodao u kontakte",
+                    time = DateTime.Now,          // ili DateTime.UtcNow ako svuda koristiš UTC
+                    avatarUrl = string.IsNullOrWhiteSpace(profilePicture)
+                    ? null
+                    : "http://localhost:5104/images/" + profilePicture, // ili neki default / url korisnika ako ga imaš
+                    korisnik = majstorId
+                };
+
+                var json = JsonSerializer.Serialize(notif);
+
+            // Dodaj u Redis LIST (na kraj ili početak, kako ti odgovara)
+                await _cache.ListRightPushAsync(notifKey, json);
+                await _cache.PublishAsync("notification", json);
+                }
             return existed==false;
         }
         finally
@@ -127,20 +159,41 @@ public class OcenaService: IOcenaService
     }
 
     public async Task<bool> uploadOcena(string userId, string majstorId, int ocena)
-    {
+    {    
         IAsyncSession? session = null;
         try
         {
             session = _driver.AsyncSession(o => o.WithDefaultAccessMode(AccessMode.Write));
             var result=await session.RunAsync(
-                @"MATCH(k:korisnik{_id:$userId})-[r:OCENA]->(m:majstor{_id:$majstorId}) with r SET r.ocena=$ocena RETURN r",
+                @"MATCH(k:korisnik{_id:$userId})-[r:OCENA]->(m:majstor{_id:$majstorId}) with r,k SET r.ocena=$ocena RETURN r,k",
                 new
                 {
                     majstorId = majstorId,
                     userId = userId,
                     ocena = ocena
                 });
-            await result.SingleAsync();
+            //Izvuci iz ove promenljive record ime i prezime korisnika i njegovu profilnu sliku i dodaj ih notifikaciju, izmeni ove variable
+            var record = await result.SingleAsync();
+            var korisnikNode = record["k"].As<INode>();
+            string fullname = $"{korisnikNode.Properties["ime"]} {korisnikNode.Properties["prezime"]}";
+            string profilePicture = korisnikNode.Properties.ContainsKey("profilePicture")
+            ? korisnikNode.Properties["profilePicture"]?.ToString() ?? ""
+            : "";
+            var notifKey = $"notifications:{majstorId}";
+            var notif = new NottificationDTO
+            {
+                id = Guid.NewGuid().ToString(),
+                text = $"{fullname} je ažurirao ocenu ({ocena}).",
+                time = DateTime.Now,       // ili DateTime.UtcNow
+                avatarUrl = string.IsNullOrWhiteSpace(profilePicture)
+                    ? null
+                    : "http://localhost:5104/images/" + profilePicture,
+                korisnik = majstorId
+            };
+
+            var json = JsonSerializer.Serialize(notif);
+            await _cache.ListRightPushAsync(notifKey, json);
+            await _cache.PublishAsync("notification", json);
             return true;
         }
         catch (Exception e)

@@ -38,6 +38,11 @@ const io = socketIo(server, {
         messageJson=JSON.parse(message);
         io.to(messageJson.chat).emit("newMessage",messageJson);
       });
+    await subClient.subscribe("notification",(notification)=>{
+      notificationJson=JSON.parse(notification)
+      console.log(notificationJson);
+      io.to(notificationJson.korisnik).emit("newNotification",notificationJson);
+    })
   })();
 
 io.on('connection',(socket)=>{
@@ -52,8 +57,9 @@ io.on('connection',(socket)=>{
       const value = await client.get("session:"+room);
       const jsonObject=JSON.parse(value);
       console.log(jsonObject);
-      console.log(`Client joined room: ${jsonObject.userId}`);
-      socket.join(jsonObject.userId);
+      if(jsonObject && jsonObject.userId){
+        socket.join(jsonObject.userId);
+      }
     });
 
     socket.on("leaveNotificationRoom",async (room)=>{

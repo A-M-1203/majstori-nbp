@@ -12,7 +12,7 @@ import { SocketService } from '../service/ser-socket';
 export class CompNotificationComponent {
   open = false;
   items$: Observable<NotificationItem[]> = this.ns.items$;
-  private notification:any[]=[];
+   notification:any[]=[];
 
   constructor(public ns: NotificationService, private el: ElementRef<HTMLElement>,private socket:SocketService) {
     // optional demo seed
@@ -21,10 +21,15 @@ export class CompNotificationComponent {
     if(token){
       socket.joinNotificationRoom(token);
       socket.onNotification((n)=>{
+        alert("Dobili ste notifikaciju");
         this.notification.push(n);
       })
     }
-    ns.get();
+    ns.get().subscribe(x=>{
+      for(let i=0;i<x.length;i++){
+        this.notification.push(x[i]);
+      }
+    });
   }
 
   toggle() {

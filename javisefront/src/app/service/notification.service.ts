@@ -23,11 +23,7 @@ export class NotificationService {
   }
 
   get(){
-    this.httpClient.get<NotificationItem[]>(url+"/nottification").subscribe(x=>{
-      for(let i=0;i<x.length;i++){
-        this._items$.next([x[i],...this._items$.value]);
-      }
-    })
+    return this.httpClient.get<NotificationItem[]>(url+"/nottification");
   }
 
   get items(): NotificationItem[] {
@@ -36,17 +32,7 @@ export class NotificationService {
 
 
 
-  push(text: string, opts?: Partial<NotificationItem>) {
-    const item: NotificationItem = {
-      id: uid(),
-      text,
-      time: Date.now(),
-      avatarUrl: opts?.avatarUrl,
-      link: opts?.link
-    };
-    this._items$.next([item, ...this._items$.value]);
-    return item.id;
-  }
+
 
 
 
@@ -58,12 +44,4 @@ export class NotificationService {
     });
   }
 
-  seedDemo() {
-    if (this._items$.value.length) return;
-    this._items$.next([
-      { id: uid(), text: 'ana_likes liked your photo.', time: Date.now() - 2 * 60_000, avatarUrl: 'https://i.pravatar.cc/64?img=5' },
-      { id: uid(), text: 'marko99 commented: “🔥🔥”', time: Date.now() - 45 * 60_000, avatarUrl: 'https://i.pravatar.cc/64?img=12' },
-      { id: uid(), text: 'jelena started following you.', time: Date.now() - 3 * 60 * 60_000, avatarUrl: 'https://i.pravatar.cc/64?img=8' },
-    ]);
-  }
 }
