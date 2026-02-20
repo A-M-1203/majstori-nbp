@@ -29,18 +29,17 @@ import { CompHeaderToolbarComponent } from './comp-header-toolbar/comp-header-to
 import {MatGridListModule} from '@angular/material/grid-list';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import {MatDialogModule, matDialogAnimations} from '@angular/material/dialog';
-import { CompPostavljanjeOglasaComponent } from './comp-postavljanje-oglasa/comp-postavljanje-oglasa.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatIconModule} from '@angular/material/icon';
 import { ServiceLogovanje } from './service/ser-logovanje';
 import { AuthInterceptor } from './interceptor/interceptor';
 import { AuthGuard } from './guard/AuthGuard';
-import { CompEditovanjeOglasaComponent } from './comp-editovanje-oglasa/comp-editovanje-oglasa.component';
+
 import { CompEditovanjeProfilaMajstorComponent } from './comp-editovanje-profila-majstor/comp-editovanje-profila-majstor.component';
 import { PassGuard } from './guard/PassGuard';
 import { CompKategorijaInformacijeComponent } from './comp-kategorija-informacije/comp-kategorija-informacije.component';
 import { CompInformacijeOMajstoruComponent } from './comp-informacije-o-majstoru/comp-informacije-o-majstoru.component';
-import { CompInformacijeOOglasuComponent } from './comp-informacije-o-oglasu/comp-informacije-o-oglasu.component';
+
 import { CompIzabraniMajstoriComponent } from './comp-izabrani-majstori/comp-izabrani-majstori.component';
 import { CompEditovanjeKlientaComponent } from './comp-editovanje-klienta/comp-editovanje-klienta.component';
 import { CompCharRoomClientComponent } from './comp-char-room-client/comp-char-room-client.component';
@@ -59,12 +58,9 @@ import { CompNotificationComponent } from './comp-notification/comp-notification
     CompGlavnaStranicaKlijentComponent,
     CompGlavnaStranicaMajstorComponent,
     CompHeaderToolbarComponent,
-    CompPostavljanjeOglasaComponent,
-    CompEditovanjeOglasaComponent,
     CompEditovanjeProfilaMajstorComponent,
     CompKategorijaInformacijeComponent,
     CompInformacijeOMajstoruComponent,
-    CompInformacijeOOglasuComponent,
     CompIzabraniMajstoriComponent,
     CompEditovanjeKlientaComponent,
     CompCharRoomClientComponent,

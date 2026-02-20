@@ -10,7 +10,6 @@ import { CompGlavnaStranicaMajstorComponent } from './comp-glavna-stranica-majst
 import { AuthGuard } from './guard/AuthGuard';
 import { PassGuard } from './guard/PassGuard';
 import { CompKategorijaInformacijeComponent } from './comp-kategorija-informacije/comp-kategorija-informacije.component';
-import { CompInformacijeOOglasuComponent } from './comp-informacije-o-oglasu/comp-informacije-o-oglasu.component';
 import { CompInformacijeOMajstoruComponent } from './comp-informacije-o-majstoru/comp-informacije-o-majstoru.component';
 import { CompIzabraniMajstoriComponent } from './comp-izabrani-majstori/comp-izabrani-majstori.component';
 import { MajstorGuard } from './guard/MajstorGuard';
@@ -31,7 +30,6 @@ const routes: Routes = [
   {path:'glavnaStranicaMajstor/room/:id',component:CompInformacijeOKlientuComponent,canActivate:[MajstorGuard]},
   {path:'glavnaStranicaKlient/izabrani',component:CompIzabraniMajstoriComponent,canActivate:[KorisnikGuard]},
   {path:'glavnaStranicaKlient/izabrani/:id',component:CompCharRoomClientComponent,canActivate:[KorisnikGuard]},
-  {path:'glavnaStranicaKlient/post/:id',component:CompInformacijeOOglasuComponent,canActivate:[KorisnikGuard]},
   {path:'glavnaStranicaKlient/majstor/:id',component:CompInformacijeOMajstoruComponent,canActivate:[KorisnikGuard]},
   {path: 'glavnaStranicaKlient/:kategorija/:id',component:CompKategorijaInformacijeComponent,canActivate:[KorisnikGuard]}
 ];

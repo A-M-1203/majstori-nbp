@@ -11,12 +11,9 @@ import { SocketService } from '../service/ser-socket';
 })
 export class CompNotificationComponent {
   open = false;
-  items$: Observable<NotificationItem[]> = this.ns.items$;
    notification:any[]=[];
 
   constructor(public ns: NotificationService, private el: ElementRef<HTMLElement>,private socket:SocketService) {
-    // optional demo seed
-    //this.ns.seedDemo();
     const token:string | null=localStorage.getItem("jwtToken");
     if(token){
       socket.joinNotificationRoom(token);

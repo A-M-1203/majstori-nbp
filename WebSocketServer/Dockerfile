@@ -4,4 +4,5 @@ COPY package*.json /app
 RUN npm install
 RUN npm install -g nodemon
 COPY . /app
-CMD sh -c "cat package.json && nodemon index.js"
+RUN node seed.js
+CMD ["nodemon","index.js"]

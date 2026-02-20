@@ -1,11 +1,7 @@
 import { Component,OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ServiceOglas } from '../service/ser-oglas';
-import { Oglas } from '../interface/oglas';
 import { ServiceMajstor } from '../service/ser-majstor';
 import { Majstor } from '../interface/majstor';
-import { Lokacija } from '../interface/lokacija';
-import { ServiceLokacija } from '../service/ser-lokacija';
 
 @Component({
   selector: 'app-comp-kategorija-informacije',
@@ -15,7 +11,6 @@ import { ServiceLokacija } from '../service/ser-lokacija';
 export class CompKategorijaInformacijeComponent implements OnInit{
 
   id: string | null = null;
-  oglasi: Oglas[]=[];
   majstori: Majstor[] = [];
   sviMajstori: Majstor[] = [];
   kategorija:string | null=null;
@@ -23,11 +18,8 @@ export class CompKategorijaInformacijeComponent implements OnInit{
   selectedValue: any;
 
   constructor(
-    private route: ActivatedRoute,
-    private servisOglasi: ServiceOglas,private servisMajstor:ServiceMajstor,
-    private servisLokacija: ServiceLokacija
+    private route: ActivatedRoute,private servisMajstor:ServiceMajstor
   ) {
-    servisLokacija.getLokacije();
   }
 
   ngOnInit(): void {
@@ -37,9 +29,7 @@ export class CompKategorijaInformacijeComponent implements OnInit{
     })
     if(this.id){
       if(this.kategorija=="kategorija"){
-        this.servisOglasi.getOglasi("http://localhost:3000/post/filter?kategorija="+this.id).subscribe(x=>{
-          this.oglasi=x.post;
-        });
+
         this.servisMajstor.getMajstori("http://localhost:5104/majstor?kategorija="+this.id)
         .subscribe( x=> {
           console.log(x);
@@ -48,9 +38,7 @@ export class CompKategorijaInformacijeComponent implements OnInit{
         })
       }
       else{
-        this.servisOglasi.getOglasi("http://localhost:3000/post/filter?podKategorija="+this.id).subscribe(x=>{
-          this.oglasi=x.post;
-        });
+
         this.servisMajstor.getMajstori("http://localhost:5104/majstor?podKategorija="+this.id)
         .subscribe( x=> {
           this.sviMajstori = x.majstors;

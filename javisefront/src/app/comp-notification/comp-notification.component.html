@@ -13,10 +13,6 @@
       <div class="title">Notifications</div>
     </div>
 
-    <div class="list" *ngIf="(items$ | async) as items">
-      <div class="empty" *ngIf="items.length === 0">
-        No notifications yet.
-      </div>
 
       <button
         class="row"
@@ -38,7 +34,6 @@
           </div>
         </div>
       </button>
-    </div>
 
     <div class="foot">
       <button class="link-btn" type="button" (click)="ns.clear()">Clear</button>

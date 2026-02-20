@@ -26,39 +26,10 @@
           <button mat-raised-button class="dugme" (click)="openDialogEditujProfil()">Editujte profil</button>
         </mat-card-actions>
         <mat-card-actions>
-          <button mat-raised-button class="dugme" (click)="openDialogPostavi()">Dodajte oglas</button>
-        </mat-card-actions>
-        <mat-card-actions>
           <button mat-raised-button class="dugme" (click)="openChatRoom()">Pristupite razgovoru</button>
         </mat-card-actions>
       </div>
     </mat-card>
   </div>
 
-  <div class="right-card-container">
-    <mat-card class="card-right">
-      <mat-card-header class="card-header">
-        <mat-card-title>Oglasi</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <ul>
-          <ng-container *ngFor="let item of oglasi">
-            <li class="oglas-item">
-              <img *ngIf="item.slike.length" [src]="item.slike[0]" alt="{{item.title}}" class="oglas-image" />
-              <div class="oglas-text">
-                <span class="oglas-title">{{item.title}}</span>
-                <span class="oglas-content">{{item.content | slice:0:80}}<span *ngIf="item.content.length > 50"
-                    class="fade-out"></span>...</span>
-                <div class="buttons-container">
-                  <button mat-raised-button class="button-levo" color="accent"
-                    (click)="obrisiOglas(item._id)">Izbrišite</button>
-                  <button mat-raised-button class="button-desno" (click)="openDialogEdituj(item)">Editujte</button>
-                </div>
-              </div>
-            </li>
-          </ng-container>
-        </ul>
-      </mat-card-content>
-    </mat-card>
-  </div>
 </div>
