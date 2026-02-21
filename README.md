@@ -6,49 +6,49 @@ Ovaj projekat predstavlja distribuiranu web aplikaciju za povezivanje korisnika 
 
 ## Arhitektura sistema
 
-Sistem je zasnovan na višeslojnoj i događajno-orijentisanoj arhitekturi i sastoji se iz sledećih komponenti:
+Sistem je zasnovan na višeslojnoj i event-driven arhitekturi i sastoji se iz sledećih komponenti:
 
-- Angular klijentska aplikacija  
-- ASP.NET backend API  
-- Node.js WebSocket server  
-- Neo4j graf baza  
-- Redis in-memory baza sa Pub/Sub mehanizmom  
+- Angular klijentska aplikacija
+- ASP.NET backend API
+- Node.js WebSocket server
+- Neo4j graf baza
+- Redis in-memory baza sa Pub/Sub mehanizmom
 
 ### Komunikacija između komponenti
 
-- Angular → ASP.NET : HTTP/REST  
-- Angular ↔ WebSocket server : WebSocket  
-- ASP.NET → Redis : Pub/Sub + skladištenje  
-- WebSocket server ← Redis : Pub/Sub pretplata  
+- Angular → ASP.NET : HTTP/REST
+- Angular ↔ WebSocket server : WebSocket
+- ASP.NET → Redis : Pub/Sub + skladištenje
+- WebSocket server ← Redis : Pub/Sub pretplata
 
 ## Funkcionalnosti sistema
 
 Sistem omogućava:
 
-- registraciju i autentikaciju korisnika i majstoa   
-- pretragu vodoinstalatera po kategorijam i podkategorijam
-- razmenu poruka između korisnika i majstora 
-- real-time notifikacije o novim porukama  
+- registraciju i autentifikaciju korisnika i majstora
+- pretragu majstora po kategorijam i podkategorijama
+- razmenu poruka između korisnika i majstora
+- real-time notifikacije o novim porukama
 
 ## Tehnologije
 
 **Frontend**
 
-- Angular  
+- Angular
 
 **Backend**
 
-- ASP.NET Web API  
+- ASP.NET Web API
 
 **Real-time komunikacija**
 
-- Node.js WebSocket server  
-- Redis Pub/Sub  
+- Node.js WebSocket server
+- Redis Pub/Sub
 
 **Baze podataka**
 
-- Neo4j (graf podaci)  
-- Redis (sesije, poruke, notifikacije)  
+- Neo4j (graf podaci)
+- Redis (sesije, poruke, notifikacije)
 
 ## Model podataka
 
@@ -56,13 +56,13 @@ Sistem omogućava:
 
 U Neo4j graf bazi čuvaju se domenski entiteti i njihove veze:
 
-- korisnici  
-- vodoinstalateri  
-- kategorije  
-- podkategorije  
-- relacije između korisnika, vodoinstalatera i kategorija  
+- korisnici
+- majstori
+- kategorije
+- podkategorije
+- relacije između korisnika, majstora i kategorija
 
-Graf struktura omogućava efikasno povezivanje korisnika sa relevantnim vodoinstalaterima na osnovu usluge.
+Graf struktura omogućava efikasno povezivanje korisnika sa relevantnim majstorima na osnovu usluge.
 
 ### Redis
 
@@ -70,9 +70,9 @@ Redis se koristi kao in-memory baza i sistem za razmenu događaja.
 
 U Redis-u se čuvaju:
 
-- web sesioni tokeni  
-- poruke  
-- notifikacije  
+- web session tokeni
+- poruke
+- notifikacije
 
 Takođe se koristi Redis Pub/Sub za komunikaciju između ASP.NET backend-a i WebSocket servera.
 
@@ -80,38 +80,42 @@ Takođe se koristi Redis Pub/Sub za komunikaciju između ASP.NET backend-a i Web
 
 Slanje poruke funkcioniše na sledeći način:
 
-1. Korisnik šalje poruku iz Angular aplikacije  
-2. Angular šalje HTTP zahtev ASP.NET backendu  
-3. Backend čuva poruku u Redis  
-4. Backend objavljuje događaj na Redis Pub/Sub kanalu  
-5. Node.js WebSocket server prima događaj  
-6. WebSocket server šalje poruku odgovarajućem Angular klijentu  
+1. Korisnik šalje poruku iz Angular aplikacije
+2. Angular šalje HTTP zahtev ASP.NET backendu
+3. Backend čuva poruku u Redis-u
+4. Backend objavljuje događaj na Redis Pub/Sub kanalu
+5. Node.js WebSocket server prima događaj
+6. WebSocket server šalje poruku odgovarajućem Angular klijentu
 
 Ovim pristupom omogućena je real-time komunikacija bez direktne zavisnosti klijenta od backend servera za isporuku poruka.
 
 ## Prednosti arhitekture
 
-- odvajanje real-time komunikacije od poslovne logike  
-- skalabilna distribucija poruka preko Redis Pub/Sub  
-- brza obrada i isporuka poruka (in-memory Redis)  
-- efikasna relacijska pretraga (Neo4j graf model)  
-- modularna i proširiva arhitektura  
+- odvajanje real-time komunikacije od poslovne logike
+- skalabilna distribucija poruka preko Redis Pub/Sub
+- brza obrada i isporuka poruka (in-memory Redis)
+- efikasna pretraga po vezama (Neo4j graf model)
+- modularna i proširiva arhitektura
 
 ## Zaključak
 
-Sistem predstavlja distribuiranu web aplikaciju zasnovanu na mikroservisnim principima, sa kombinacijom graf baze (Neo4j), in-memory baze (Redis) i WebSocket real-time komunikacije. Arhitektura omogućava efikasno povezivanje korisnika i vodoinstalatera, brzu razmenu poruka i skalabilno proširenje sistema.
+Sistem predstavlja distribuiranu web aplikaciju zasnovanu na mikroservisnim principima, sa kombinacijom graf baze (Neo4j), in-memory baze (Redis) i WebSocket real-time komunikacije. Arhitektura omogućava efikasno povezivanje korisnika i majstora, brzu razmenu poruka i skalabilno proširenje sistema.
 
-##Pokretanje
+## Pokretanje
 
-Prvo git clonuj repo
-Zatim napraviti .env file unutar Seeding foldera i neka bude ovakav sadrzaj
+Prvo klonirati repozitorijum:
+
+```
+git clone https://github.com/A-M-1203/majstori-nbp.git
+```
+
+Zatim napraviti .env file unutar Seeding foldera i neka bude ovakav sadrzaj:
 
 ```
 NEO4J_URI=bolt://localhost:7687
 NEO4J_USERNAME=neo4j
 NEO4J_PASSWORD=tvoj_password
 NEO4J_DATABASE=neo4j
-
 ```
 
 Zatim napraviti .env file unutar majstor-nbp-server foldera i neka bude ovakav sadrzaj:
@@ -130,7 +134,6 @@ REDIS_URI=redis
 REDIS_PORT=6379
 REDIS_USER=default
 REDIS_PASSWORD=redis_password
-
 ```
 
 Zatim napraviti .env file unutar WebSocketServer folder i neka bude ovakav sardzaj:
@@ -144,13 +147,13 @@ NEO4J_AUTH=neo4j/tvoj_password
 ```
 mkdir neo4j_data #volume za neo4j data
 docker-compose build #za bildovanje image, u slucaju linux sudo docker-compose build
-ducker-compose up # za povretanje instanci, u slucaju linux sudo docker-compose up
+docker-compose up # za povretanje instanci, u slucaju linux sudo docker-compose up
 ```
 
-Nakno toga seedovati podatke 
+Na kraju seed-ovati podatke:
+
 ```
 cd Seeding
 npm install
 node seed.js
-
 ```
