@@ -13,5 +13,6 @@ RUN dotnet publish "majstori-nbp-server.csproj" -c Release -o /app/publish /p:Us
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 EXPOSE 5104
+COPY ./images ./images
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "majstori-nbp-server.dll"]
