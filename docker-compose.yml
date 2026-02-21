@@ -57,7 +57,7 @@ services:
       dockerfile: Dockerfile
     container_name: backend-nbp
     ports:
-      - "5050:8080"
+      - "5104:5104"
     env_file:
       - ./.env
     environment:
