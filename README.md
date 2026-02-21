@@ -112,7 +112,7 @@ git clone https://github.com/A-M-1203/majstori-nbp.git
 Zatim napraviti .env fajl unutar Seeding foldera i neka bude ovakav sadržaj:
 
 ```
-NEO4J_URI=bolt://localhost:7687
+NEO4J_URI=bolt://neo4j:7687
 NEO4J_USERNAME=neo4j
 NEO4J_PASSWORD=password123
 NEO4J_DATABASE=neo4j
