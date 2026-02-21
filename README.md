@@ -145,12 +145,12 @@ NEO4J_AUTH=neo4j/tvoj_password
 ### Pokretanje
 
 ```
-mkdir neo4j_data #volume za neo4j data
-docker-compose build #za bildovanje image, u slucaju linux sudo docker-compose build
-docker-compose up # za povretanje instanci, u slucaju linux sudo docker-compose up
+mkdir neo4j_data     # volume za neo4j data (mora da bude u root folderu projekta)
+docker-compose build # za bildovanje image, u slucaju linux-a sudo docker-compose build
+docker-compose up    # za povretanje instanci, u slucaju linux-a sudo docker-compose up
 ```
 
-Na kraju seed-ovati podatke:
+Na kraju seed-ovati podatke iz Seeding foldera:
 
 ```
 cd Seeding
