@@ -150,14 +150,6 @@ docker-compose build # za build-ovanje image-a, u slucaju linux-a sudo docker-co
 docker-compose up    # za pokretanje instanci, u slucaju linux-a sudo docker-compose up
 ```
 
-Na kraju seed-ovati podatke iz Seeding foldera:
-
-```
-cd Seeding
-npm install
-node seed.js
-```
-
 Otvoriti frontend preko web pretraživača na adresi:
 
 ```
