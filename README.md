@@ -157,3 +157,9 @@ cd Seeding
 npm install
 node seed.js
 ```
+
+Otvoriti frontend preko web pretrazivaca na adresi:
+
+```
+localhost:4050
+```
