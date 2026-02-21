@@ -100,3 +100,49 @@ Ovim pristupom omogućena je real-time komunikacija bez direktne zavisnosti klij
 ## Zaključak
 
 Sistem predstavlja distribuiranu web aplikaciju zasnovanu na mikroservisnim principima, sa kombinacijom graf baze (Neo4j), in-memory baze (Redis) i WebSocket real-time komunikacije. Arhitektura omogućava efikasno povezivanje korisnika i vodoinstalatera, brzu razmenu poruka i skalabilno proširenje sistema.
+
+##Pokretanje
+
+Prvo git clonuj repo
+Zatim napraviti .env file unutar Seeding foldera i neka bude ovakav sadrzaj
+
+```
+NEO4J_URI=bolt://localhost:7687
+NEO4J_USERNAME=neo4j
+NEO4J_PASSWORD=tvoj_password
+NEO4J_DATABASE=neo4j
+
+```
+
+Zatim napraviti .env file unutar majstor-nbp-server foldera i neka bude ovakav sadrzaj:
+
+```
+NEO4J_URI=bolt://neo4j:7687
+NEO4J_USERNAME=neo4j
+NEO4J_PASSWORD=tvoj_password
+NEO4J_DATABASE=neo4j
+AURA_INSTANCEID=b079bc42
+AURA_INSTANCENAME=Instance01
+JWT_ISSUER=milutin
+JWT_AUDIENCE=user
+JWT_SECRET=D5B36A9DEE6C9BB716882A3AD4DE2714734EBD6E2516C
+REDIS_URI=redis
+REDIS_PORT=6379
+REDIS_USER=default
+REDIS_PASSWORD=redis_password
+
+```
+
+Zatim napraviti .env file unutar WebSocketServer folder i neka bude ovakav sardzaj:
+
+```
+NEO4J_AUTH=neo4j/tvoj_password
+```
+
+### Pokretanje
+
+```
+mkdir neo4j_data #volume za neo4j data
+docker-compose build #za bildovanje image, u slucaju linux sudo docker-compose build
+ducker-compose up # za povretanje instanci, u slucaju linux sudo docker-compose up
+```
