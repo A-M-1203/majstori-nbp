@@ -19,7 +19,7 @@ Sistem je zasnovan na višeslojnoj i event-driven arhitekturi i sastoji se iz sl
 - Angular → ASP.NET : HTTP/REST
 - Angular ↔ WebSocket server : WebSocket
 - ASP.NET → Redis : Pub/Sub + skladištenje
-- WebSocket server ← Redis : Pub/Sub pretplata
+- WebSocket server ← Redis : Pub/Sub mehanizam
 
 ## Funkcionalnosti sistema
 
@@ -47,7 +47,7 @@ Sistem omogućava:
 
 **Baze podataka**
 
-- Neo4j (graf podaci)
+- Neo4j (korisnici, majstori, kategorije, podkategorije i njihove međusobne veze)
 - Redis (sesije, poruke, notifikacije)
 
 ## Model podataka
@@ -81,7 +81,7 @@ Takođe se koristi Redis Pub/Sub za komunikaciju između ASP.NET backend-a i Web
 Slanje poruke funkcioniše na sledeći način:
 
 1. Korisnik šalje poruku iz Angular aplikacije
-2. Angular šalje HTTP zahtev ASP.NET backendu
+2. Angular šalje HTTP zahtev ASP.NET backend-u
 3. Backend čuva poruku u Redis-u
 4. Backend objavljuje događaj na Redis Pub/Sub kanalu
 5. Node.js WebSocket server prima događaj
@@ -92,7 +92,7 @@ Ovim pristupom omogućena je real-time komunikacija bez direktne zavisnosti klij
 ## Prednosti arhitekture
 
 - odvajanje real-time komunikacije od poslovne logike
-- skalabilna distribucija poruka preko Redis Pub/Sub
+- skalabilna distribucija poruka preko Redis Pub/Sub-a
 - brza obrada i isporuka poruka (in-memory Redis)
 - efikasna pretraga po vezama (Neo4j graf model)
 - modularna i proširiva arhitektura
@@ -109,7 +109,7 @@ Prvo klonirati repozitorijum:
 git clone https://github.com/A-M-1203/majstori-nbp.git
 ```
 
-Zatim napraviti .env file unutar Seeding foldera i neka bude ovakav sadrzaj:
+Zatim napraviti .env fajl unutar Seeding foldera i neka bude ovakav sadržaj:
 
 ```
 NEO4J_URI=bolt://localhost:7687
@@ -118,7 +118,7 @@ NEO4J_PASSWORD=tvoj_password
 NEO4J_DATABASE=neo4j
 ```
 
-Zatim napraviti .env file unutar majstor-nbp-server foldera i neka bude ovakav sadrzaj:
+Zatim napraviti .env fajl unutar majstor-nbp-server foldera i neka bude ovakav sadržaj:
 
 ```
 NEO4J_URI=bolt://neo4j:7687
@@ -136,7 +136,7 @@ REDIS_USER=default
 REDIS_PASSWORD=redis_password
 ```
 
-Zatim napraviti .env file unutar WebSocketServer folder i neka bude ovakav sardzaj:
+Zatim napraviti .env fajl unutar WebSocketServer folder i neka bude ovakav sardzaj:
 
 ```
 NEO4J_AUTH=neo4j/tvoj_password
@@ -146,8 +146,8 @@ NEO4J_AUTH=neo4j/tvoj_password
 
 ```
 mkdir neo4j_data     # volume za neo4j data (mora da bude u root folderu projekta)
-docker-compose build # za bildovanje image, u slucaju linux-a sudo docker-compose build
-docker-compose up    # za povretanje instanci, u slucaju linux-a sudo docker-compose up
+docker-compose build # za build-ovanje image-a, u slucaju linux-a sudo docker-compose build
+docker-compose up    # za pokretanje instanci, u slucaju linux-a sudo docker-compose up
 ```
 
 Na kraju seed-ovati podatke iz Seeding foldera:
@@ -158,7 +158,7 @@ npm install
 node seed.js
 ```
 
-Otvoriti frontend preko web pretrazivaca na adresi:
+Otvoriti frontend preko web pretraživača na adresi:
 
 ```
 localhost:4050
