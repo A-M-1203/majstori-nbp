@@ -15,6 +15,10 @@ using StackExchange.Redis;
 DotEnv.Load();
 
 var builder = WebApplication.CreateBuilder(args);
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(5104);
+});
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.PropertyNamingPolicy = null;
@@ -97,7 +101,8 @@ builder.Services.AddCors(options =>
                 "http://localhost:4200",
                 "http://127.0.0.1:4200",
                 "http://localhost:4050",
-                "http://127.0.0.1:4050"
+                "http://127.0.0.1:4050",
+                "http://frontend:4050"
             );
     });
 });
