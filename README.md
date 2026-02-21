@@ -114,7 +114,7 @@ Zatim napraviti .env fajl unutar Seeding foldera i neka bude ovakav sadržaj:
 ```
 NEO4J_URI=bolt://localhost:7687
 NEO4J_USERNAME=neo4j
-NEO4J_PASSWORD=tvoj_password
+NEO4J_PASSWORD=password123
 NEO4J_DATABASE=neo4j
 ```
 
@@ -123,7 +123,7 @@ Zatim napraviti .env fajl unutar majstor-nbp-server foldera i neka bude ovakav s
 ```
 NEO4J_URI=bolt://neo4j:7687
 NEO4J_USERNAME=neo4j
-NEO4J_PASSWORD=tvoj_password
+NEO4J_PASSWORD=password123
 NEO4J_DATABASE=neo4j
 AURA_INSTANCEID=b079bc42
 AURA_INSTANCENAME=Instance01
@@ -139,7 +139,7 @@ REDIS_PASSWORD=redis_password
 Zatim napraviti .env fajl unutar WebSocketServer folder i neka bude ovakav sardzaj:
 
 ```
-NEO4J_AUTH=neo4j/tvoj_password
+NEO4J_AUTH=neo4j/password123
 ```
 
 ### Pokretanje
