@@ -146,3 +146,11 @@ mkdir neo4j_data #volume za neo4j data
 docker-compose build #za bildovanje image, u slucaju linux sudo docker-compose build
 ducker-compose up # za povretanje instanci, u slucaju linux sudo docker-compose up
 ```
+
+Nakno toga seedovati podatke 
+```
+cd Seeding
+npm install
+node seed.js
+
+```
